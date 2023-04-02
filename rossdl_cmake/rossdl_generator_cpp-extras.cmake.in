@@ -1,0 +1,8 @@
+# generated from rossdl_generator_cpp/rossdl_generator_cpp-extras.cmake
+
+include("${CMAKE_CURRENT_LIST_DIR}/register_cpp.cmake")
+rossdl_generator_cpp_extras(
+  "${rossdl_generator_cpp_DIR}/../../../lib/rossdl_generator_cpp/rossdl_generator_cpp"
+  "${rossdl_generator_cpp_DIR}/../../../@PYTHON_INSTALL_DIR@/rossdl_generator_cpp/__init__.py"
+  # "${rossdl_generator_cpp_DIR}/../resource"
+)

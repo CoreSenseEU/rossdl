@@ -1,0 +1,4 @@
+# generated from rosidl_cmake/cmake/rosidl_cmake-extras.cmake.in
+
+set(@PROJECT_NAME@_SDL_FILES "@_rossdl_cmake_SDL_FILES@")
+set(@PROJECT_NAME@_CODE_FILES "@_rossdl_cmake_CODE_FILES@")

@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import sys
+
+try:
+    from rossdl_cmake import generate_cpp
+except ImportError:
+    # modifying sys.path and importing the Python package with the same
+    # name as this script does not work on Windows
+    rossdl_generator_cpp_root = os.path.dirname(os.path.dirname(__file__))
+    rossdl_generator_cpp_module = os.path.join(
+        rossdl_generator_cpp_root, 'sdl_generator_cpp', '__init__.py')
+    if not os.path.exists(rossdl_generator_cpp_module):
+        raise
+    from importlib.machinery import SourceFileLoader
+
+    loader = SourceFileLoader('sdl_generator_cpp', rossdl_generator_cpp_module)
+    rossdl_generator_cpp = loader.load_module()
+    generate_cpp = rossdl_generator_cpp.generate_cpp
+
+
+def main(argv=sys.argv[1:]):
+    parser = argparse.ArgumentParser(
+        description='Generate ROS 2 System Code.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument(
+        '--generator-arguments-file',
+        required=True,
+        help='The location of the file containing the generator arguments')
+    args = parser.parse_args(argv)
+
+    generate_cpp(args.generator_arguments_file)
+
+
+if __name__ == '__main__':
+    sys.exit(main())
