@@ -24,6 +24,7 @@ rossdl_generate_code(${PROJECT_NAME}
 add_library(${PROJECT_NAME} SHARED
   src/rossdl_test/Nodes2.cpp
   src/rossdl_test/ImageFilter.cpp
+  src/rossdl_test/Consumer.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 

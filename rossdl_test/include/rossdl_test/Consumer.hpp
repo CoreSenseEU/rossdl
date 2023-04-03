@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROSSDL_TEST__IMAGEFILTER_HPP_
-#define ROSSDL_TEST__IMAGEFILTER_HPP_
+#ifndef ROSSDL_TEST__CONSUMER_HPP_
+#define ROSSDL_TEST__CONSUMER_HPP_
 
 #include "sensor_msgs/msg/image.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -26,15 +26,16 @@
 namespace rossdl_test
 {
 
-class ImageFilter : public ImageFilterBase2
+class Consumer : public ConsumerBase2
 {
 public:
-  ImageFilter();
+  Consumer();
 
 protected:
-  virtual void image_sub_3_callback(sensor_msgs::msg::Image::SharedPtr msg);
+  virtual void image_sub_0_callback(sensor_msgs::msg::Image::SharedPtr msg);
+  virtual void string_sub_1_callback(std_msgs::msg::String::SharedPtr msg);
 };
 
 }  // namespace rossdl_test
 
-#endif  // ROSSDL_TEST__IMAGEFILTER_HPP_
+#endif  // ROSSDL_TEST__CONSUMER_HPP_

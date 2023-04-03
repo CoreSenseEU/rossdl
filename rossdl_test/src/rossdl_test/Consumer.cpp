@@ -13,28 +13,32 @@
 // limitations under the License.
 
 
-#ifndef ROSSDL_TEST__IMAGEFILTER_HPP_
-#define ROSSDL_TEST__IMAGEFILTER_HPP_
-
 #include "sensor_msgs/msg/image.hpp"
 #include "std_msgs/msg/string.hpp"
 
-#include "rossdl_test/Nodes2.hpp"
+#include "rossdl_test/Consumer.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
 namespace rossdl_test
 {
 
-class ImageFilter : public ImageFilterBase2
+Consumer::Consumer()
 {
-public:
-  ImageFilter();
+}
 
-protected:
-  virtual void image_sub_3_callback(sensor_msgs::msg::Image::SharedPtr msg);
-};
+void
+Consumer::image_sub_0_callback(sensor_msgs::msg::Image::SharedPtr msg)
+{
+  (void)msg;
+  RCLCPP_INFO(get_logger(), "Image message received");
+}
+
+void
+Consumer::string_sub_1_callback(std_msgs::msg::String::SharedPtr msg)
+{
+  (void)msg;
+  RCLCPP_INFO(get_logger(), "String message received");
+}
 
 }  // namespace rossdl_test
-
-#endif  // ROSSDL_TEST__IMAGEFILTER_HPP_

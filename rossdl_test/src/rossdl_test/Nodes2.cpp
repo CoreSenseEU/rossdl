@@ -30,4 +30,17 @@ ImageFilterBase2::ImageFilterBase2()
     std::bind(&ImageFilterBase2::image_sub_3_callback, this, _1));
 }
 
+ConsumerBase2::ConsumerBase2()
+: Node("consumer")
+{
+  image_sub_0_ = create_subscription<sensor_msgs::msg::Image>(
+    std::string(get_fully_qualified_name()) + "/image_in",
+    rclcpp::SensorDataQoS().reliable(),
+    std::bind(&ConsumerBase2::image_sub_0_callback, this, _1));
+  string_sub_1_ = create_subscription<std_msgs::msg::String>(
+    std::string(get_fully_qualified_name()) + "/description_in",
+    100,
+    std::bind(&ConsumerBase2::string_sub_1_callback, this, _1));
+}
+
 }  // namespace rossdl_test

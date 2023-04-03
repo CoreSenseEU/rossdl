@@ -16,14 +16,23 @@
 #include <memory>
 
 #include "rossdl_test/ImageFilter.hpp"
+#include "rossdl_test/Consumer.hpp"
+
 #include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rossdl_test::ImageFilter>();
-  rclcpp::spin(node);
+  rclcpp::executors::SingleThreadedExecutor exe;
+
+  auto image_filter = std::make_shared<rossdl_test::ImageFilter>();
+  auto consumer = std::make_shared<rossdl_test::Consumer>();
+
+  exe.add_node(image_filter);
+  exe.add_node(consumer);
+
+  exe.spin();
 
   rclcpp::shutdown();
 
