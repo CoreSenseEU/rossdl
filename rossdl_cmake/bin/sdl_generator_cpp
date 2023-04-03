@@ -25,13 +25,28 @@ def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description='Generate ROS 2 System Code.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
     parser.add_argument(
-        '--generator-arguments-file',
+        '--description-file',
         required=True,
-        help='The location of the file containing the generator arguments')
+        help='The location of the file containing the description')
+    parser.add_argument(
+        '--header-out-file',
+        required=True,
+        help='The location of the header file to generate')
+    parser.add_argument(
+        '--source-out-file',
+        required=True,
+        help='The location of the source file to generate')
+
     args = parser.parse_args(argv)
 
-    generate_cpp(args.generator_arguments_file)
+    data = dict()
+    data['message'] = 'hello'
+
+    generate_cpp(args.description_file,
+                 args.header_out_file, args.source_out_file,
+                 data)
 
 
 if __name__ == '__main__':

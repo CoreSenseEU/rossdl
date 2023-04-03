@@ -5,6 +5,8 @@ project(rossdl_cmake NONE)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+
 ament_python_install_package(${PROJECT_NAME})
 
 if(BUILD_TESTING)
@@ -13,7 +15,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_package(
-  CONFIG_EXTRAS 
+  CONFIG_EXTRAS
     "rossdl_cmake-extras.cmake"
     "rossdl_generator_cpp-extras.cmake.in"
 )
@@ -21,10 +23,10 @@ ament_package(
 
 install(
   PROGRAMS bin/sdl_generator_cpp
-  DESTINATION lib/sdl_generator_cpp
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
-  DIRECTORY cmake
+  DIRECTORY cmake resources
   DESTINATION share/${PROJECT_NAME}
 )

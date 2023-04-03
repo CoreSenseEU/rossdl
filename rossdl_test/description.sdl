@@ -2,7 +2,7 @@ amentPackages: [project_example]
   project_example:
     FromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
     artifacts:
-      image_filter_base:
+      image_filter:
         node: "image_filter"
         publishers:
           image_out:
@@ -13,7 +13,7 @@ amentPackages: [project_example]
             type: "std_msgs/msg/String"
             qos_history_depth: 100
         subscribers:
-          image_out:
+          image_in:
             type: "sensor_msgs/msg/Image"
             qos:
               qos_profile: "sensor_qos"
@@ -22,7 +22,7 @@ amentPackages: [project_example]
           description_label:
             type: string
             default: "default image"
-      consumer_base:
+      consumer:
         node: "consumer"
         subscribers:
           image_in:
@@ -32,5 +32,3 @@ amentPackages: [project_example]
               qos_reliability: "reliable"
           description_in:
             type: "std_msgs/msg/String"
-
-
