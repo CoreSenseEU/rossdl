@@ -18,8 +18,10 @@ jobs:
         os: [ubuntu-22.04]
       fail-fast: false
     steps:
-      - name: build and test
-        uses: ros-tooling/action-ros-ci@0.3.0
+      - uses: ros-tooling/setup-ros@v0.6
+        with:
+          required-ros-distributions: humble
+      - uses: ros-tooling/action-ros-ci@v0.3
         with:
           package-name: rossdl_cmake rossdl_test
           target-ros2-distro: humble
