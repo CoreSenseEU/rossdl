@@ -26,12 +26,6 @@ def generate_cpp(file_in, header_out, source_out, data):
     header_in = os.path.join(resources_dir, 'nodes.hpp.em')
     source_in = os.path.join(resources_dir, 'nodes.cpp.em')
 
-    # print("I should generate files from {}".format(file_in))
-    # print("\tHeader IN {}".format(header_in))
-    # print("\tSource IN {}".format(source_in))
-    # print("\tHeader OUT {}".format(header_out))
-    # print("\tSource OUT {}".format(source_out))
-
     generate_file(header_in, header_out, data)
     generate_file(source_in, source_out, data)
 
@@ -54,7 +48,6 @@ def generate_file(file_in, file_out, data):
         _interpreter.string(content, file_in, locals=data)
         _interpreter.invoke('afterFile')
         content = file_output.getvalue()
-        # print(content)
     except Exception as e:  # noqa: F841
         print(
             f"{e.__class__.__name__} processing template '{file_in}'",
@@ -65,7 +58,6 @@ def generate_file(file_in, file_out, data):
         _interpreter = None
 
     if os.path.exists(file_out):
-        # print('path {} existe'.format(file_out))
         timestamp_in = os.path.getmtime(file_in)
         timestamp_out = None
         try:
@@ -77,11 +69,9 @@ def generate_file(file_in, file_out, data):
                 if h.read() == content:
                     return
     else:
-        # print('archivo NO existe')
         try:
             os.makedirs(os.path.dirname(file_out))
         except FileExistsError:
-            # print('FileExistsError error')
             pass
 
     with open(file_out, 'w', encoding='utf-8') as h:
