@@ -18,6 +18,8 @@ using std::placeholders::_1;
 ImageFilterBase2::ImageFilterBase2()
 : Node("image_filter")
 {
+  declare_parameter("description_label", std::string("default image"));
+
   image_pub_0_ = create_publisher<sensor_msgs::msg::Image>(
     std::string(get_fully_qualified_name()) + "/image_out",
     rclcpp::SensorDataQoS());

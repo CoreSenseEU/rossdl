@@ -1,5 +1,5 @@
-amentPackages: [project_example]
-  project_example:
+amentPackages: [rossdl_test]
+  rossdl_test:
     FromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
     artifacts:
       image_filter:
