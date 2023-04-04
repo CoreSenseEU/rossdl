@@ -48,13 +48,19 @@ rossdl_test:
 
 ## Usage
 
-Just place a definition file in your package, and add this to CMakeLists:
+Just place a definition file in your package, add this to CMakeLists:
 
 ```
 rossdl_generate_code(${PROJECT_NAME}
   "description.sdl"
   ${dependencies}
 )
+```
+
+and compile with colcon:
+
+```
+colcon build --symlink-install --packages-select rossdl_cmake rossdl_test
 ```
 
 Package `rossdl_test` contains an example of use.
