@@ -54,6 +54,17 @@ macro(rossdl_generate_code target description_file)
     set(_code_tuple "${CMAKE_CURRENT_SOURCE_DIR}:${description_file}")
   endif()
 
+  ament_index_get_prefix_path(PACKAGES_INSTALL_PATHS)
+  set(ROSSDL_CMAKE_PATH "")
+  foreach(PACKAGES_INSTALL_PATH ${PACKAGES_INSTALL_PATHS})
+    if(PACKAGES_INSTALL_PATH MATCHES "rossdl_cmake")
+      set(ROSSDL_CMAKE_PATH ${PACKAGES_INSTALL_PATH})
+    endif()
+  endforeach()
+
+  set(RESOURCE_CPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.cpp.em)
+  set(RESOURCE_HPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.hpp.em)
+
   string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_file "${_code_tuple}")
   set(_header_out_file  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/Nodes.hpp)
   set(_source_out_file  ${CMAKE_CURRENT_BINARY_DIR}/src/${PROJECT_NAME}/Nodes.cpp)
@@ -65,13 +76,13 @@ macro(rossdl_generate_code target description_file)
         --description-file ${_abs_file}
         --header-out-file ${_header_out_file}
         --source-out-file ${_source_out_file}
-    DEPENDS ${_abs_file}
+    DEPENDS ${_abs_file} ${RESOURCE_CPP} ${RESOURCE_HPP} 
     COMMENT "Generating code for ROS 2 System"
     VERBATIM
   )
-
+  include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
   add_library(${PROJECT_NAME}_generated SHARED
-    ${_source_out_file} ${_header_out_file}
+    ${_source_out_file} ${_header_out_file} 
   )
   ament_target_dependencies(${PROJECT_NAME}_generated ${ARGN})
 

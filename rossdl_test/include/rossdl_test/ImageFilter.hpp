@@ -19,20 +19,21 @@
 #include "sensor_msgs/msg/image.hpp"
 #include "std_msgs/msg/string.hpp"
 
-#include "rossdl_test/Nodes2.hpp"
+#include "rossdl_test/Nodes.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
 namespace rossdl_test
 {
 
-class ImageFilter : public ImageFilterBase2
+class ImageFilter : public ImageFilterBase
 {
 public:
   ImageFilter();
 
 protected:
-  virtual void image_sub_3_callback(sensor_msgs::msg::Image::SharedPtr msg);
+  virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg);
+  virtual void laser_in_callback(sensor_msgs::msg::LaserScan::SharedPtr msg);
 };
 
 }  // namespace rossdl_test

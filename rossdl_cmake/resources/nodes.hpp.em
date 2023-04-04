@@ -1,19 +1,113 @@
 // generated from rossdl_cmake/resource/nodes.hpp.em
 // generated code does not contain a copyright notice
 
-@#######################################################################
-@# EmPy template for generating <idl>.hpp files
-@#
-@# Context:
-@#  - package_name (string)
-@#  - interface_path (Path relative to the directory named after the package)
-@#  - content (IdlContent, list of elements, e.g. Messages or Services)
-@#######################################################################
-@
 @{
-name = 'paco'
+from rossdl_cmake import get_header_guard
+from rossdl_cmake import get_message_headers
+from rossdl_cmake import get_package_name
+from rossdl_cmake import get_node_names
+from rossdl_cmake import get_class_names_from_node
+from rossdl_cmake import get_publishers_name_type_from_node
+from rossdl_cmake import get_subscriptions_name_type_from_node
+
+header_guard = get_header_guard(locals())
+package_name = get_package_name(locals())
+node_names = get_node_names(locals())
+
+node_class_names = []
+for node_name in node_names:
+    node_class_names.append((node_name, get_class_names_from_node(node_name)))
+
 }@
+#ifndef @(header_guard)
+#define @(header_guard)
+
+#include <string>
+#include <optional>
+#include <typeinfo>
+
+@{
+msg_headers = get_message_headers(locals())
+}@
+@[for header_file in msg_headers]@
+#include "@(header_file)"
+@[end for]@
+
 #include "rclcpp/rclcpp.hpp"
 
-void dummy();
+namespace @(package_name)
+{
 
+@[for node_name in node_class_names]@
+class @(node_name[1])Base : public rclcpp::Node
+{
+public:
+  @(node_name[1])Base();
+
+protected:
+@{
+publishers_info = get_publishers_name_type_from_node(locals(), node_name[0])
+}@
+@[    for publisher_info in publishers_info]@
+  rclcpp::Publisher<@(publisher_info[1])>::SharedPtr @(publisher_info[0])_;
+@[    end for]@
+@{
+subscribers_info = get_subscriptions_name_type_from_node(locals(), node_name[0])
+}@
+@[    for subscriber_info in subscribers_info]@
+  rclcpp::Subscription<@(subscriber_info[1])>::SharedPtr @(subscriber_info[0])_;
+@[    end for]@
+
+@[    for subscriber_info in subscribers_info]@
+  virtual void @(subscriber_info[0])_callback(@(subscriber_info[1])::SharedPtr msg) = 0;
+@[    end for]@
+
+  template<typename T>
+  typename rclcpp::Publisher<T>::SharedPtr
+  get_publisher(const std::string & id)
+  {
+    auto ret_pub = std::dynamic_pointer_cast<typename rclcpp::Publisher<T>>(
+      get_publisher_base(id));
+    return ret_pub;
+  }
+
+  template<typename T>
+  typename rclcpp::Subscription<T>::SharedPtr
+  get_subscription(const std::string & id)
+  {
+    auto ret_sub = std::dynamic_pointer_cast<typename rclcpp::Subscription<T>>(
+      get_subscription_base(id));
+    return ret_sub;
+  }
+
+  typename rclcpp::PublisherBase::SharedPtr
+  get_publisher_base(const std::string & id)
+  {
+@[    for publisher_info in publishers_info]@
+    if (id == "@(publisher_info[0])") {
+        return @(publisher_info[0])_;
+    } 
+@[    end for]@
+    RCLCPP_ERROR(get_logger(), "Publisher [%s] not found", id.c_str());
+    return nullptr;
+  }
+
+  typename rclcpp::SubscriptionBase::SharedPtr
+  get_subscription_base(const std::string & id)
+  {
+@[    for subscriber_info in subscribers_info]@
+    if (id == "@(subscriber_info[0])") {
+        return @(subscriber_info[0])_;
+    } 
+@[    end for]@
+    RCLCPP_ERROR(get_logger(), "Subscriber [%s] not found", id.c_str());
+    return nullptr;
+  }
+};
+
+@[end for]@
+
+}  // namespace @(package_name)
+
+#endif  // @(header_guard)
+  

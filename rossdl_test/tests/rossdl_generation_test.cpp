@@ -35,10 +35,11 @@ TEST(rossdl_generation_test, image_filter_unit)
 
   auto topics = image_filter->get_topic_names_and_types();
 
-  ASSERT_EQ(topics.size(), 5u);
+  ASSERT_EQ(topics.size(), 6u);
   ASSERT_NE(topics.find("/image_filter/image_out"), topics.end());
   ASSERT_NE(topics.find("/image_filter/description_out"), topics.end());
   ASSERT_NE(topics.find("/image_filter/image_in"), topics.end());
+  ASSERT_NE(topics.find("/image_filter/laser_in"), topics.end());
   ASSERT_NE(topics.find("/rosout"), topics.end());
   ASSERT_NE(topics.find("/parameter_events"), topics.end());
 

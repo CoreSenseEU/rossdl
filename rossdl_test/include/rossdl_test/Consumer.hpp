@@ -19,21 +19,21 @@
 #include "sensor_msgs/msg/image.hpp"
 #include "std_msgs/msg/string.hpp"
 
-#include "rossdl_test/Nodes2.hpp"
+#include "rossdl_test/Nodes.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
 namespace rossdl_test
 {
 
-class Consumer : public ConsumerBase2
+class Consumer : public ConsumerBase
 {
 public:
   Consumer();
 
 protected:
-  virtual void image_sub_0_callback(sensor_msgs::msg::Image::SharedPtr msg);
-  virtual void string_sub_1_callback(std_msgs::msg::String::SharedPtr msg);
+  virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg);
+  virtual void description_in_callback(std_msgs::msg::String::SharedPtr msg);
 };
 
 }  // namespace rossdl_test

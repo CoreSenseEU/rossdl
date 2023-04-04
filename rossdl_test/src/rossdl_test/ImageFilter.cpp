@@ -28,7 +28,7 @@ ImageFilter::ImageFilter()
 }
 
 void
-ImageFilter::image_sub_3_callback(sensor_msgs::msg::Image::SharedPtr msg)
+ImageFilter::image_in_callback(sensor_msgs::msg::Image::SharedPtr msg)
 {
   (void)msg;
   RCLCPP_INFO(get_logger(), "Message received");
@@ -39,6 +39,13 @@ ImageFilter::image_sub_3_callback(sensor_msgs::msg::Image::SharedPtr msg)
   } else {
     RCLCPP_ERROR(get_logger(), "Error getting image_out publisher");
   }
+}
+
+void
+ImageFilter::laser_in_callback(sensor_msgs::msg::LaserScan::SharedPtr msg)
+{
+  (void)msg;
+  RCLCPP_INFO(get_logger(), "Laser message received");
 }
 
 }  // namespace rossdl_test

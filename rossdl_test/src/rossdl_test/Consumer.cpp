@@ -28,14 +28,14 @@ Consumer::Consumer()
 }
 
 void
-Consumer::image_sub_0_callback(sensor_msgs::msg::Image::SharedPtr msg)
+Consumer::image_in_callback(sensor_msgs::msg::Image::SharedPtr msg)
 {
   (void)msg;
   RCLCPP_INFO(get_logger(), "Image message received");
 }
 
 void
-Consumer::string_sub_1_callback(std_msgs::msg::String::SharedPtr msg)
+Consumer::description_in_callback(std_msgs::msg::String::SharedPtr msg)
 {
   (void)msg;
   RCLCPP_INFO(get_logger(), "String message received");

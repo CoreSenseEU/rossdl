@@ -45,8 +45,7 @@ def main(argv=sys.argv[1:]):
     data['message'] = 'hello'
 
     generate_cpp(args.description_file,
-                 args.header_out_file, args.source_out_file,
-                 data)
+                 args.header_out_file, args.source_out_file)
 
 
 if __name__ == '__main__':
