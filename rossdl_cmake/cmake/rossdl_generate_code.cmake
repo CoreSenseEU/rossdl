@@ -76,13 +76,13 @@ macro(rossdl_generate_code target description_file)
         --description-file ${_abs_file}
         --header-out-file ${_header_out_file}
         --source-out-file ${_source_out_file}
-    DEPENDS ${_abs_file} ${RESOURCE_CPP} ${RESOURCE_HPP} 
+    DEPENDS ${_abs_file} ${RESOURCE_CPP} ${RESOURCE_HPP}
     COMMENT "Generating code for ROS 2 System"
     VERBATIM
   )
   include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
   add_library(${PROJECT_NAME}_generated SHARED
-    ${_source_out_file} ${_header_out_file} 
+    ${_source_out_file} ${_header_out_file}
   )
   ament_target_dependencies(${PROJECT_NAME}_generated ${ARGN})
 

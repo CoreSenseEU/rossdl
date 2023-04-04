@@ -22,38 +22,43 @@ import em
 import yaml
 from yaml.loader import SafeLoader
 
+
 def read_description(file_in):
     with open(file_in) as f:
         data = yaml.load(f, Loader=SafeLoader)
         return data
 
+
 def get_package_name(data):
     return list(data.keys())[0]
+
 
 def get_node_names(data):
     pkg_name = list(data.keys())[0]
     pkg_artifacts = data[pkg_name]['artifacts']
     return list(pkg_artifacts.keys())
 
+
 def get_publishers_name_type_from_node(data, node):
     pkg_name = list(data.keys())[0]
     pkg_artifacts = data[pkg_name]['artifacts']
 
-    ret = []    
+    ret = []
     if node in pkg_artifacts:
         node_content = pkg_artifacts[node]
         if 'publishers' in node_content:
             publishers = list(node_content['publishers'].keys())
             for publisher in publishers:
                 publisher_info = node_content['publishers'][publisher]
-                type = publisher_info['type'].replace('/', '::')
-                ret.append((publisher, type))
+                pub_type = publisher_info['type'].replace('/', '::')
+                ret.append((publisher, pub_type))
     return ret
 
+
 def get_qos_from_data(data):
-    ret = ""
+    ret = ''
     if 'qos_history_depth' in data:
-        ret = 'rclcpp::QoS(' + str(data['qos_history_depth']) + ")"
+        ret = 'rclcpp::QoS(' + str(data['qos_history_depth']) + ')'
     if 'qos_profile' in data:
         if data['qos_profile'] == 'sensor_qos':
             ret = 'rclcpp::SensorDataQoS()'
@@ -62,13 +67,13 @@ def get_qos_from_data(data):
             ret = ret + '.reliable()'
         elif data['qos_reliability'] == 'best effort':
             ret = ret + '.BestEffort()'
-    ## Here we need to comple all the options
+    # Here we need to comple all the options
     return ret
+
 
 def get_qos_from_node_topic(data, node, topic):
     pkg_name = list(data.keys())[0]
     pkg_artifacts = data[pkg_name]['artifacts']
-    pkg_nodes = list(pkg_artifacts.keys())
 
     if node in pkg_artifacts:
         node_content = pkg_artifacts[node]
@@ -89,20 +94,22 @@ def get_qos_from_node_topic(data, node, topic):
                 else:
                     return '100'
 
+
 def get_subscriptions_name_type_from_node(data, node):
     pkg_name = list(data.keys())[0]
     pkg_artifacts = data[pkg_name]['artifacts']
 
-    ret = []    
+    ret = []
     if node in pkg_artifacts:
         node_content = pkg_artifacts[node]
         if 'subscribers' in node_content:
             subscribers = list(node_content['subscribers'].keys())
             for subscriber in subscribers:
                 subscriber_info = node_content['subscribers'][subscriber]
-                type = subscriber_info['type'].replace('/', '::')
-                ret.append((subscriber, type))
+                sub_type = subscriber_info['type'].replace('/', '::')
+                ret.append((subscriber, sub_type))
     return ret
+
 
 def get_class_names_from_node(node):
     node_list = list(node)
@@ -113,35 +120,38 @@ def get_class_names_from_node(node):
             output.append(node_list[i].upper())
         elif node_list[i] != '_':
             output.append(node_list[i])
-    return "".join(output) 
+    return ''.join(output)
+
 
 def get_header_guard(data):
     pkg_name = list(data.keys())[0]
-    return pkg_name.upper() + "__NODES_HPP_"
+    return pkg_name.upper() + '__NODES_HPP_'
+
 
 def get_message_header_from_type(msg_type):
     msg_type_list = list(msg_type)
     output = []
     for i in range(len(msg_type_list)):
         if msg_type_list[i].isupper():
-            if msg_type_list[i - 1] != "/":
-                output.append("_")          
+            if msg_type_list[i - 1] != '/':
+                output.append('_')
             output.append(msg_type[i].lower())
         else:
             output.append(msg_type_list[i])
-    return "".join(output) + ".hpp"
+    return ''.join(output) + '.hpp'
 
-def to_cpp_type(type):
-    if type == 'string':
+
+def to_cpp_type(ptype):
+    if ptype == 'string':
         return 'std::string'
-    elif type == 'float':
+    elif ptype == 'float':
         return 'float'
-    ## Here we need to comple all the options
+    # Here we need to comple all the options
+
 
 def get_parameters_info(data, node):
     pkg_name = list(data.keys())[0]
     pkg_artifacts = data[pkg_name]['artifacts']
-    pkg_nodes = list(pkg_artifacts.keys())  
 
     ret = []
     if node in pkg_artifacts:
@@ -154,6 +164,7 @@ def get_parameters_info(data, node):
                             to_cpp_type(parameter_info['type']),
                             parameter_info['default']))
     return ret
+
 
 def get_message_headers(data):
     pkg_name = list(data.keys())[0]
@@ -178,6 +189,7 @@ def get_message_headers(data):
     for msg_type in msg_types:
         headers_ret.append(get_message_header_from_type(msg_type))
     return headers_ret
+
 
 def generate_cpp(file_in, header_out, source_out):
     resources_dir = os.path.join(get_package_share_directory('rossdl_cmake'), 'resources')
