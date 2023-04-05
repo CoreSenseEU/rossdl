@@ -4,12 +4,14 @@ project(rossdl_test)
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rossdl_cmake REQUIRED)
 
 set(dependencies
   rclcpp
+  rclcpp_components
   std_msgs
   sensor_msgs
 )
@@ -27,6 +29,9 @@ add_library(${PROJECT_NAME} SHARED
 )
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_generated)
+
+rclcpp_components_register_nodes(${PROJECT_NAME} "rossdl_test::ImageFilter")
+rclcpp_components_register_nodes(${PROJECT_NAME} "rossdl_test::Consumer")
 
 add_executable(rossdl_test_main
   src/rossdl_test_main.cpp

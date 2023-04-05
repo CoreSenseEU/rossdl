@@ -29,7 +29,7 @@ namespace rossdl_test
 class ImageFilter : public ImageFilterBase
 {
 public:
-  ImageFilter();
+  ImageFilter(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 protected:
   virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg);

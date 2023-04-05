@@ -43,8 +43,8 @@ using std::placeholders::_1;
 publishers_info = get_publishers_name_type_from_node(locals(), node_name[0])
 subscribers_info = get_subscriptions_name_type_from_node(locals(), node_name[0])
 }@
-@(node_name[1])Base::@(node_name[1])Base()
-: Node("@(node_name[0])")
+@(node_name[1])Base::@(node_name[1])Base(const rclcpp::NodeOptions & options)
+: Node("@(node_name[0])", options)
 {
 @[    for publisher_info in publishers_info]@
   @(publisher_info[0])_ = create_publisher<@(publisher_info[1])>(
