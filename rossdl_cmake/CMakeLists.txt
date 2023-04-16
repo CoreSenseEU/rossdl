@@ -22,8 +22,11 @@ ament_package(
 
 
 install(
-  PROGRAMS bin/sdl_generator_cpp
-  DESTINATION lib/${PROJECT_NAME}
+  PROGRAMS
+    bin/sdl_generator_cpp
+    bin/sdl_generator_launch
+
+    DESTINATION lib/${PROJECT_NAME}
 )
 
 install(

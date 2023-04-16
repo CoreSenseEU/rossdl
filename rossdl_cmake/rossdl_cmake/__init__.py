@@ -236,7 +236,7 @@ def generate_file(file_in, file_out, data):
             timestamp_out = os.path.getmtime(file_out)
         except FileNotFoundError:
             pass
-        if False and timestamp_out is not None and timestamp_out < timestamp_in:
+        if timestamp_out is not None and timestamp_out < timestamp_in:
             with open(file_out, 'r', encoding='utf-8') as h:
                 if h.read() == content:
                     return
@@ -248,3 +248,122 @@ def generate_file(file_in, file_out, data):
 
     with open(file_out, 'w', encoding='utf-8') as h:
         h.write(content)
+
+
+def get_system_remappings(data, system_name):
+    artifacts = data['artifacts']
+    system = data['systems'][system_name]
+    connections = system['connections']
+
+    remappings = {}
+    for connection in connections:
+        origin = connection[0].split('/')[1]
+        destiny = connection[1].split('/')[1]
+
+        if origin in list(artifacts.keys()):
+            if origin not in remappings.keys():
+                remappings[origin] = []
+            remappings[origin].append((connection[0], connection[1]))
+        elif destiny in list(artifacts.keys()):
+            if destiny not in remappings.keys():
+                remappings[destiny] = []
+            remappings[destiny].append((connection[1], connection[0]))
+    return remappings
+
+
+def get_system_parameters(data, system_name):
+    artifacts = data['artifacts']
+    system = data['systems'][system_name]
+    parameters = system['parameters']
+
+    parameters_ret = {}
+    for parameter in parameters:
+        parameter_name = parameter[0].split('/')[2]
+        node_name = parameter[0].split('/')[1]
+        value = parameter[1]
+
+        if node_name == '*':
+            for node in list(artifacts.keys()):
+                if node not in parameters_ret.keys():
+                    parameters_ret[node] = []
+                parameters_ret[node].append((parameter_name, value))
+        else:
+            if node_name not in parameters_ret.keys():
+                parameters_ret[node_name] = []
+            parameters_ret[node_name].append((parameter_name, value))
+
+    return (parameters, parameters_ret)
+
+
+def get_system_to_generate(data):
+    return data['system']
+
+
+def get_system_nodes(data, system):
+    pkg_name = list(data['data'].keys())[0]
+    node_names = data['data'][pkg_name]['systems'][system]['nodes']
+    ret = []
+    for node in node_names:
+        pkg = node.split('::')[0]
+        class_name = get_class_names_from_node(node.split('::')[1])
+        ret.append((node.split('::')[1], pkg + '::' + class_name))
+    return ret
+
+
+def generate_launch(file_in, file_out, system, data):
+    data_and_system = {}
+    data_and_system['data'] = data
+    data_and_system['system'] = system
+
+    file_output = StringIO()
+    content = ''
+    try:
+        _interpreter = em.Interpreter(
+            output=file_output,
+            options={
+                em.BUFFERED_OPT: True,
+                em.RAW_OPT: True,
+            })
+
+        with open(file_in, 'r') as h:
+            content = h.read()
+        _interpreter.invoke(
+            'beforeFile', name=file_in, file=h, locals=data_and_system)
+        _interpreter.string(content, file_in, locals=data_and_system)
+        _interpreter.invoke('afterFile')
+        content = file_output.getvalue()
+    except Exception as e:  # noqa: F841
+        print(
+            f"{e.__class__.__name__} processing template '{file_in}'",
+            file=sys.stderr)
+        raise
+    finally:
+        _interpreter.shutdown()
+        _interpreter = None
+
+    if os.path.exists(file_out):
+        timestamp_in = os.path.getmtime(file_in)
+        timestamp_out = None
+        try:
+            timestamp_out = os.path.getmtime(file_out)
+        except FileNotFoundError:
+            pass
+        if timestamp_out is not None and timestamp_out < timestamp_in:
+            with open(file_out, 'r', encoding='utf-8') as h:
+                if h.read() == content:
+                    return
+    else:
+        try:
+            os.makedirs(os.path.dirname(file_out))
+        except FileExistsError:
+            pass
+    with open(file_out, 'w', encoding='utf-8') as h:
+        h.write(content)
+
+
+def generate_system(file_in, file_out, system):
+    resources_dir = os.path.join(get_package_share_directory('rossdl_cmake'), 'resources')
+    launch_in = os.path.join(resources_dir, 'launcher.py.em')
+
+    data = read_description(file_in)
+    generate_launch(launch_in, file_out, system, data)

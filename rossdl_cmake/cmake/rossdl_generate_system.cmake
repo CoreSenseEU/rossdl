@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-macro(rossdl_generate_code description_file)
+macro(rossdl_generate_system description_file system)
   get_filename_component(_extension ${description_file} LAST_EXT)
 
   if("${_extension}" STREQUAL "")
@@ -62,40 +62,34 @@ macro(rossdl_generate_code description_file)
     endif()
   endforeach()
 
-  set(RESOURCE_CPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.cpp.em)
-  set(RESOURCE_HPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.hpp.em)
+  set(RESOURCE_LAUNCH ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/launcher.py.em)
 
   string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_file "${_code_tuple}")
-  set(_header_out_file  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/Nodes.hpp)
-  set(_source_out_file  ${CMAKE_CURRENT_BINARY_DIR}/src/${PROJECT_NAME}/Nodes.cpp)
+  set(_launch_out_file  ${CMAKE_CURRENT_BINARY_DIR}/launch/${system}.launch.py)
 
   add_custom_command(
-    OUTPUT ${_source_out_file} ${_header_out_file}
+    OUTPUT ${_launch_out_file}
     COMMAND ros2
-      ARGS run rossdl_cmake sdl_generator_cpp
+      ARGS run rossdl_cmake sdl_generator_launch
         --description-file ${_abs_file}
-        --header-out-file ${_header_out_file}
-        --source-out-file ${_source_out_file}
-    DEPENDS ${_abs_file} ${RESOURCE_CPP} ${RESOURCE_HPP}
-    COMMENT "Generating code for ROS 2 System"
+        --launch-out-file ${_launch_out_file}
+        --system ${system}
+        DEPENDS ${_abs_file} ${RESOURCE_LAUNCH}
+    COMMENT "Generating launcher for ROS 2 System: ${system}"
     VERBATIM
   )
-  include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
-  add_library(${PROJECT_NAME}_generated SHARED
-    ${_source_out_file} ${_header_out_file}
-  )
-  ament_target_dependencies(${PROJECT_NAME}_generated ${ARGN})
+  add_custom_target(run ALL
+    DEPENDS ${_launch_out_file})
 
-  install(TARGETS
-    ${PROJECT_NAME}_generated
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION lib/${PROJECT_NAME}
+  install(FILES
+    ${_launch_out_file}
+    DESTINATION share/${PROJECT_NAME}/launch
   )
 
   install(FILES
     ${_abs_file}
     DESTINATION share/${PROJECT_NAME}
   )
+
 
 endmacro()

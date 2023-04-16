@@ -29,7 +29,7 @@ namespace rossdl_test
 class Consumer : public ConsumerBase
 {
 public:
-  Consumer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit Consumer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 protected:
   virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg);

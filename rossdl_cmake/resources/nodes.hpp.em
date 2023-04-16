@@ -42,7 +42,7 @@ namespace @(package_name)
 class @(node_name[1])Base : public rclcpp::Node
 {
 public:
-  @(node_name[1])Base(const rclcpp::NodeOptions & options);
+  explicit @(node_name[1])Base(const rclcpp::NodeOptions & options);
 
 protected:
 @{

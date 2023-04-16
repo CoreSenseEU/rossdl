@@ -31,8 +31,9 @@ Consumer::Consumer(const rclcpp::NodeOptions & options)
 void
 Consumer::image_in_callback(sensor_msgs::msg::Image::SharedPtr msg)
 {
-  (void)msg;
   RCLCPP_INFO(get_logger(), "Image message received");
+  auto pub = get_publisher<sensor_msgs::msg::Image>("image_out");
+  pub->publish(*msg);
 }
 
 void

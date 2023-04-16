@@ -5,20 +5,20 @@ import os
 import sys
 
 try:
-    from rossdl_cmake import generate_cpp
+    from rossdl_cmake import generate_system
 except ImportError:
     # modifying sys.path and importing the Python package with the same
     # name as this script does not work on Windows
-    rossdl_generator_cpp_root = os.path.dirname(os.path.dirname(__file__))
-    rossdl_generator_cpp_module = os.path.join(
-        rossdl_generator_cpp_root, 'sdl_generator_cpp', '__init__.py')
-    if not os.path.exists(rossdl_generator_cpp_module):
+    rossdl_generator_launch_root = os.path.dirname(os.path.dirname(__file__))
+    rossdl_generator_launch_module = os.path.join(
+        rossdl_generator_launch_root, 'sdl_generator_cpp', '__init__.py')
+    if not os.path.exists(rossdl_generator_launch_module):
         raise
     from importlib.machinery import SourceFileLoader
 
-    loader = SourceFileLoader('sdl_generator_cpp', rossdl_generator_cpp_module)
-    rossdl_generator_cpp = loader.load_module()
-    generate_cpp = rossdl_generator_cpp.generate_cpp
+    loader = SourceFileLoader('sdl_generator_cpp', rossdl_generator_launch_module)
+    rossdl_generator_launch = loader.load_module()
+    generate_cpp = rossdl_generator_launch.generate_cpp
 
 
 def main(argv=sys.argv[1:]):
@@ -31,18 +31,18 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The location of the file containing the description')
     parser.add_argument(
-        '--header-out-file',
+        '--launch-out-file',
         required=True,
-        help='The location of the header file to generate')
+        help='The location of the launcher file to generate')
     parser.add_argument(
-        '--source-out-file',
+        '--system',
         required=True,
-        help='The location of the source file to generate')
+        help='The system to generate')
 
     args = parser.parse_args(argv)
 
-    generate_cpp(args.description_file,
-                 args.header_out_file, args.source_out_file)
+    generate_system(args.description_file,
+                 args.launch_out_file, args.system)
 
 
 if __name__ == '__main__':

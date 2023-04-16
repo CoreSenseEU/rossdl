@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(rossdl_test)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -18,8 +20,14 @@ set(dependencies
 
 include_directories(include)
 
-rossdl_generate_code(${PROJECT_NAME}
+rossdl_generate_code(
   "description.sdl"
+  ${dependencies}
+)
+
+rossdl_generate_system(
+  "description.sdl"
+  "system_1"
   ${dependencies}
 )
 
@@ -33,15 +41,8 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_generated)
 rclcpp_components_register_nodes(${PROJECT_NAME} "rossdl_test::ImageFilter")
 rclcpp_components_register_nodes(${PROJECT_NAME} "rossdl_test::Consumer")
 
-add_executable(rossdl_test_main
-  src/rossdl_test_main.cpp
-)
-ament_target_dependencies(rossdl_test_main ${dependencies})
-target_link_libraries(rossdl_test_main ${PROJECT_NAME} ${PROJECT_NAME}_generated)
-
 install(TARGETS
   ${PROJECT_NAME}
-  rossdl_test_main
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

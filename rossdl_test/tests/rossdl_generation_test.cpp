@@ -53,7 +53,7 @@ TEST(rossdl_generation_test, image_filter_unit)
   {
     auto info = image_filter->get_subscriptions_info_by_topic("/image_filter/image_in");
     ASSERT_EQ(info.size(), 1u);
-    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
+    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
     ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
     ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
     ASSERT_EQ(info[0].qos_profile().depth(), 0u);
@@ -61,7 +61,7 @@ TEST(rossdl_generation_test, image_filter_unit)
   {
     auto info = image_filter->get_publishers_info_by_topic("/image_filter/image_out");
     ASSERT_EQ(info.size(), 1u);
-    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
+    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
     ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
     ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
     ASSERT_EQ(info[0].qos_profile().depth(), 0u);
@@ -83,21 +83,32 @@ TEST(rossdl_generation_test, consumer_unit)
 
   auto topics = consumer->get_topic_names_and_types();
 
-  ASSERT_EQ(topics.size(), 4u);
+  ASSERT_EQ(topics.size(), 5u);
   ASSERT_NE(topics.find("/consumer/description_in"), topics.end());
   ASSERT_NE(topics.find("/consumer/image_in"), topics.end());
+  ASSERT_NE(topics.find("/consumer/image_out"), topics.end());
   ASSERT_NE(topics.find("/rosout"), topics.end());
   ASSERT_NE(topics.find("/parameter_events"), topics.end());
 
   ASSERT_EQ(topics["/consumer/image_in"].size(), 1u);
   ASSERT_EQ(topics["/consumer/image_in"][0], "sensor_msgs/msg/Image");
+  ASSERT_EQ(topics["/consumer/image_out"].size(), 1u);
+  ASSERT_EQ(topics["/consumer/image_out"][0], "sensor_msgs/msg/Image");
   ASSERT_EQ(topics["/consumer/description_in"].size(), 1u);
   ASSERT_EQ(topics["/consumer/description_in"][0], "std_msgs/msg/String");
 
   {
     auto info = consumer->get_subscriptions_info_by_topic("/consumer/image_in");
     ASSERT_EQ(info.size(), 1u);
-    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
+    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
+    ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
+    ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
+    ASSERT_EQ(info[0].qos_profile().depth(), 0u);
+  }
+  {
+    auto info = consumer->get_publishers_info_by_topic("/consumer/image_out");
+    ASSERT_EQ(info.size(), 1u);
+    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
     ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
     ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
     ASSERT_EQ(info[0].qos_profile().depth(), 0u);
