@@ -14,6 +14,7 @@
   <depend>rossdl_cmake</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>backward_ros</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

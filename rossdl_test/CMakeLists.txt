@@ -10,12 +10,14 @@ find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rossdl_cmake REQUIRED)
+find_package(backward_ros REQUIRED)
 
 set(dependencies
   rclcpp
   rclcpp_components
   std_msgs
   sensor_msgs
+  backward_ros
 )
 
 include_directories(include)

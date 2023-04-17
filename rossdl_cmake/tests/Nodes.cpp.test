@@ -1,0 +1,55 @@
+// generated from rossdl_cmake/resource/nodes.hpp.em
+// generated code does not contain a copyright notice
+
+
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "sensor_msgs/msg/image.hpp"
+
+#include "rossdl_test/Nodes.hpp"
+
+#include "rclcpp/rclcpp.hpp"
+
+namespace rossdl_test
+{
+
+using std::placeholders::_1;
+
+ImageFilterBase::ImageFilterBase(const rclcpp::NodeOptions & options)
+: Node("image_filter", options)
+{
+  image_out_ = create_publisher<sensor_msgs::msg::Image>(
+    std::string(get_fully_qualified_name()) + "/image_out",
+    rclcpp::SensorDataQoS().reliable());
+  description_out_ = create_publisher<std_msgs::msg::String>(
+    std::string(get_fully_qualified_name()) + "/description_out",
+    rclcpp::QoS(100));
+  image_in_ = create_subscription<sensor_msgs::msg::Image>(
+    std::string(get_fully_qualified_name()) + "/image_in",
+    rclcpp::SensorDataQoS(),
+    std::bind(&ImageFilterBase::image_in_callback, this, _1));
+  laser_in_ = create_subscription<sensor_msgs::msg::LaserScan>(
+    std::string(get_fully_qualified_name()) + "/laser_in",
+    rclcpp::SensorDataQoS().reliable(),
+    std::bind(&ImageFilterBase::laser_in_callback, this, _1));
+
+  declare_parameter("description_label", std::string("default image"));
+};
+
+ConsumerBase::ConsumerBase(const rclcpp::NodeOptions & options)
+: Node("consumer", options)
+{
+  image_out_ = create_publisher<sensor_msgs::msg::Image>(
+    std::string(get_fully_qualified_name()) + "/image_out",
+    rclcpp::SensorDataQoS());
+  image_in_ = create_subscription<sensor_msgs::msg::Image>(
+    std::string(get_fully_qualified_name()) + "/image_in",
+    rclcpp::SensorDataQoS(),
+    std::bind(&ConsumerBase::image_in_callback, this, _1));
+  description_in_ = create_subscription<std_msgs::msg::String>(
+    std::string(get_fully_qualified_name()) + "/description_in",
+    100,
+    std::bind(&ConsumerBase::description_in_callback, this, _1));
+};
+
+}  // namespace rossdl_test
