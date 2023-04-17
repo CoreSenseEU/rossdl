@@ -14,13 +14,6 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package(
-  CONFIG_EXTRAS
-    "rossdl_cmake-extras.cmake"
-    "rossdl_generator_cpp-extras.cmake.in"
-)
-
-
 install(
   PROGRAMS
     bin/sdl_generator_cpp
@@ -32,4 +25,24 @@ install(
 install(
   DIRECTORY cmake resources
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  FILES
+    tests/description.sdl
+    tests/Nodes.hpp.test
+    tests/Nodes.cpp.test
+    tests/system_1.launch.py.test
+  DESTINATION share/${PROJECT_NAME}
+)
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_rossdl tests/test_rossdl.py)
+endif()
+
+ament_package(
+  CONFIG_EXTRAS
+    "rossdl_cmake-extras.cmake"
+    "rossdl_generator_cpp-extras.cmake.in"
 )

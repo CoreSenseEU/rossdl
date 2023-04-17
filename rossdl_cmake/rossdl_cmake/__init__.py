@@ -292,7 +292,7 @@ def get_system_parameters(data, system_name):
                 parameters_ret[node_name] = []
             parameters_ret[node_name].append((parameter_name, value))
 
-    return (parameters, parameters_ret)
+    return parameters_ret
 
 
 def get_system_to_generate(data):

@@ -70,7 +70,7 @@ node_name = node[0]
                         @(remap),
 @[  end for]                    ],
                     parameters=[{
-@[  for parameter in parameters[1][node_name]]@
+@[  for parameter in parameters[node_name]]@
 @{
 param_key = parameter[0]
 param_value = parameter[1]
@@ -83,23 +83,6 @@ param_value = parameter[1]
                 ),
 @[end for]@
     ])
-    #        ComposableNode(
-    #             package='image_tools',
-    #            plugin='image_tools::Cam2Image',
-    #            name='cam2image',
-    #            remappings=[('/image', '/burgerimage')],
-    #            parameters=[{'width': 320, 'height': 240, 'burger_mode': True, 'history': 'keep_last'}],
-    #            extra_arguments=[{'use_intra_process_comms': True}],
-    #        ),
-    #        ComposableNode(
-    #            package='image_tools',
-    #            plugin='image_tools::ShowImage',
-    #            name='showimage',
-    #            remappings=[('/image', '/burgerimage')],
-    #            parameters=[{'history': 'keep_last'}],
-    #            extra_arguments=[{'use_intra_process_comms': True}]
-    #        ),
-
 
     ld = LaunchDescription()
 

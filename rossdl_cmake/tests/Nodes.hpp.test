@@ -1,0 +1,138 @@
+// generated from rossdl_cmake/resource/nodes.hpp.em
+// generated code does not contain a copyright notice
+
+#ifndef ROSSDL_TEST__NODES_HPP_
+#define ROSSDL_TEST__NODES_HPP_
+
+#include <string>
+#include <optional>
+#include <typeinfo>
+
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "sensor_msgs/msg/image.hpp"
+
+#include "rclcpp/rclcpp.hpp"
+
+namespace rossdl_test
+{
+
+class ImageFilterBase : public rclcpp::Node
+{
+public:
+  explicit ImageFilterBase(const rclcpp::NodeOptions & options);
+
+protected:
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_out_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_out_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_in_;
+  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_in_;
+
+  virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg) = 0;
+  virtual void laser_in_callback(sensor_msgs::msg::LaserScan::SharedPtr msg) = 0;
+
+  template<typename T>
+  typename rclcpp::Publisher<T>::SharedPtr
+  get_publisher(const std::string & id)
+  {
+    auto ret_pub = std::dynamic_pointer_cast<typename rclcpp::Publisher<T>>(
+      get_publisher_base(id));
+    return ret_pub;
+  }
+
+  template<typename T>
+  typename rclcpp::Subscription<T>::SharedPtr
+  get_subscription(const std::string & id)
+  {
+    auto ret_sub = std::dynamic_pointer_cast<typename rclcpp::Subscription<T>>(
+      get_subscription_base(id));
+    return ret_sub;
+  }
+
+  typename rclcpp::PublisherBase::SharedPtr
+  get_publisher_base(const std::string & id)
+  {
+    if (id == "image_out") {
+        return image_out_;
+    } 
+    if (id == "description_out") {
+        return description_out_;
+    } 
+    RCLCPP_ERROR(get_logger(), "Publisher [%s] not found", id.c_str());
+    return nullptr;
+  }
+
+  typename rclcpp::SubscriptionBase::SharedPtr
+  get_subscription_base(const std::string & id)
+  {
+    if (id == "image_in") {
+        return image_in_;
+    } 
+    if (id == "laser_in") {
+        return laser_in_;
+    } 
+    RCLCPP_ERROR(get_logger(), "Subscriber [%s] not found", id.c_str());
+    return nullptr;
+  }
+};
+
+class ConsumerBase : public rclcpp::Node
+{
+public:
+  explicit ConsumerBase(const rclcpp::NodeOptions & options);
+
+protected:
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_out_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_in_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr description_in_;
+
+  virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg) = 0;
+  virtual void description_in_callback(std_msgs::msg::String::SharedPtr msg) = 0;
+
+  template<typename T>
+  typename rclcpp::Publisher<T>::SharedPtr
+  get_publisher(const std::string & id)
+  {
+    auto ret_pub = std::dynamic_pointer_cast<typename rclcpp::Publisher<T>>(
+      get_publisher_base(id));
+    return ret_pub;
+  }
+
+  template<typename T>
+  typename rclcpp::Subscription<T>::SharedPtr
+  get_subscription(const std::string & id)
+  {
+    auto ret_sub = std::dynamic_pointer_cast<typename rclcpp::Subscription<T>>(
+      get_subscription_base(id));
+    return ret_sub;
+  }
+
+  typename rclcpp::PublisherBase::SharedPtr
+  get_publisher_base(const std::string & id)
+  {
+    if (id == "image_out") {
+        return image_out_;
+    } 
+    RCLCPP_ERROR(get_logger(), "Publisher [%s] not found", id.c_str());
+    return nullptr;
+  }
+
+  typename rclcpp::SubscriptionBase::SharedPtr
+  get_subscription_base(const std::string & id)
+  {
+    if (id == "image_in") {
+        return image_in_;
+    } 
+    if (id == "description_in") {
+        return description_in_;
+    } 
+    RCLCPP_ERROR(get_logger(), "Subscriber [%s] not found", id.c_str());
+    return nullptr;
+  }
+};
+
+
+}  // namespace rossdl_test
+
+#endif  // ROSSDL_TEST__NODES_HPP_
+  
