@@ -9,44 +9,44 @@ It starts from a file like this:
 ```
 ---
 rossdl_test:
-  FromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
   artifacts:
     image_filter:
-      node: "image_filter"
-      publishers:
-        image_out:
-          type: "sensor_msgs/msg/Image"
-          qos:
-            qos_profile: "sensor_qos"
-        description_out:
-          type: "std_msgs/msg/String"
-          qos:
-            qos_history_depth: 100
-      subscribers:
-        image_in:
-          type: "sensor_msgs/msg/Image"
-          qos:
-            qos_profile: "sensor_qos"
-            qos_reliability: "reliable"
-        laser_in:
-          type: "sensor_msgs/msg/LaserScan"
-          qos:
-            qos_profile: "sensor_qos"
-            qos_reliability: "reliable"
-      parameters:
-        description_label:
-          type: string
-          default: "default image"
+      node: image_filter
+        publishers:
+          image_out:
+            type: "sensor_msgs.Image"
+            qos:
+              profile: sensor_qos
+          description_out:
+            type: "std_msgs.String"
+            qos:
+              depth: 100
+        subscribers:
+          image_in:
+            type: "sensor_msgs.Image"
+            qos: 
+              profile: sensor_qos
+              reliability: reliable
+          laser_in:
+            type: "sensor_msgs.LaserScan"
+            qos: 
+              profile: sensor_qos
+              reliability: reliable
+        parameters:
+          description_label:
+            type: string
+            default: "default image"
     consumer:
       node: "consumer"
-      subscribers:
-        image_in:
-          type: "sensor_msgs/msg/Image"
-          qos:
-            qos_profile: "sensor_qos"
-            qos_reliability: "reliable"
-        description_in:
-          type: "std_msgs/msg/String"
+        subscribers:
+          image_in:
+            type: "sensor_msgs.Image"
+            qos:
+              profile: sensor_qos
+              reliability: reliable
+          description_in:
+            type: "std_msgs.String"
 ```
 
 ## Usage
