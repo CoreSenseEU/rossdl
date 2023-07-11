@@ -18,68 +18,14 @@
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
 
-#include "rossdl_test/ImageFilter.hpp"
-#include "rossdl_test/Consumer.hpp"
+#include "system_b/Consumer.hpp"
 
 #include "gtest/gtest.h"
 
 
-TEST(rossdl_generation_test, image_filter_unit)
-{
-  auto image_filter = std::make_shared<rossdl_test::ImageFilter>();
-
-  // Parameters
-  ASSERT_TRUE(image_filter->has_parameter("description_label"));
-  auto param1 = image_filter->get_parameter("description_label");
-  ASSERT_EQ(param1.get_type(), rclcpp::ParameterType::PARAMETER_STRING);
-
-  auto topics = image_filter->get_topic_names_and_types();
-
-  ASSERT_EQ(topics.size(), 6u);
-  ASSERT_NE(topics.find("/image_filter/image_out"), topics.end());
-  ASSERT_NE(topics.find("/image_filter/description_out"), topics.end());
-  ASSERT_NE(topics.find("/image_filter/image_in"), topics.end());
-  ASSERT_NE(topics.find("/image_filter/laser_in"), topics.end());
-  ASSERT_NE(topics.find("/rosout"), topics.end());
-  ASSERT_NE(topics.find("/parameter_events"), topics.end());
-
-  ASSERT_EQ(topics["/image_filter/image_in"].size(), 1u);
-  ASSERT_EQ(topics["/image_filter/image_in"][0], "sensor_msgs/msg/Image");
-  ASSERT_EQ(topics["/image_filter/image_out"].size(), 1u);
-  ASSERT_EQ(topics["/image_filter/image_out"][0], "sensor_msgs/msg/Image");
-  ASSERT_EQ(topics["/image_filter/description_out"].size(), 1u);
-  ASSERT_EQ(topics["/image_filter/description_out"][0], "std_msgs/msg/String");
-
-  {
-    auto info = image_filter->get_subscriptions_info_by_topic("/image_filter/image_in");
-    ASSERT_EQ(info.size(), 1u);
-    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
-    ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
-    ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
-    ASSERT_EQ(info[0].qos_profile().depth(), 0u);
-  }
-  {
-    auto info = image_filter->get_publishers_info_by_topic("/image_filter/image_out");
-    ASSERT_EQ(info.size(), 1u);
-    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
-    ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
-    ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
-    ASSERT_EQ(info[0].qos_profile().depth(), 0u);
-  }
-  {
-    auto info = image_filter->get_publishers_info_by_topic("/image_filter/description_out");
-    ASSERT_EQ(info.size(), 1u);
-    ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
-    ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);
-    ASSERT_EQ(info[0].qos_profile().durability(), rclcpp::DurabilityPolicy::Volatile);
-    ASSERT_EQ(info[0].qos_profile().depth(), 0u);
-  }
-}
-
-
 TEST(rossdl_generation_test, consumer_unit)
 {
-  auto consumer = std::make_shared<rossdl_test::Consumer>();
+  auto consumer = std::make_shared<system_b::Consumer>();
 
   auto topics = consumer->get_topic_names_and_types();
 

@@ -1,0 +1,23 @@
+---
+rossdl_simple_test:
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  systems:
+    system_1:
+      nodes: [rossdl_simple_test::image_filter, rossdl_simple_test::consumer]
+      connections:
+        - [/image_filter/image_out, /consumer/image_in]
+        - [/image_filter/description_out, /consumer/description_in]
+        - [/camera/rgb/image_raw, /image_filter/image_in]
+        - [/consumer/image_out, /other_node/image_in]
+      parameters:
+        - [/image_filter/description_label, 'image raw']
+        - [/*/use_sim_time, False]
+    system_2:
+      nodes: [rossdl_simple_test::image_filter, rossdl_simple_test::consumer]
+      connections:
+        - [/image_filter/image_out, /consumer/image_in]
+        - [/image_filter/description_out, /consumer/description_in]
+      parameters:
+        - [/image_filter/description_label, 'image compressed']
+        - [/*/use_sim_time, False]   
+     

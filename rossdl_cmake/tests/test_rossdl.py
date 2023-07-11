@@ -39,7 +39,7 @@ class TestROSSDL(unittest.TestCase):
         super().__init__(*args, **kwargs)
 
         self.filename = os.path.join(get_package_share_directory(
-            'rossdl_cmake'), 'description.sdl')
+            'rossdl_cmake'), 'description.ros2')
 
     def test_read_description(self):
         yaml_data = rossdl_cmake.read_description(self.filename)

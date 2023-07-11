@@ -1,6 +1,6 @@
 ---
 rossdl_test:
-  FromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
   artifacts:
     image_filter:
       node: "image_filter"
