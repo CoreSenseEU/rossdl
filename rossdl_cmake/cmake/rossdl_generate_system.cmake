@@ -75,25 +75,29 @@ macro(rossdl_generate_system description_file system )
 
   if (ROSSDL_ARTIFACTS)
     set(ROSSDL_ARTIFACTS_NO_VOID ${ROSSDL_ARTIFACTS})
-  else()
+  endif()
+  if (NOT ROSSDL_ARTIFACTS)
     set(ROSSDL_ARTIFACTS_NO_VOID "None")
   endif()
 
   if (ROSSDL_SYSTEMS)
     set(ROSSDL_SYSTEMS_NO_VOID ${ROSSDL_SYSTEMS})
-  else()
+  endif()
+  if (NOT ROSSDL_SYSTEMS_NO_VOID)
     set(ROSSDL_SYSTEMS_NO_VOID "None")
   endif()
 
   if (NOT ${PROJECT_NAME} IN_LIST ROSSDL_ARTIFACTS)
     file(GLOB ROSSDL_LOCAL_ARTIFACTS_NO_VOID "${CMAKE_CURRENT_SOURCE_DIR}/*.ros2")
-  else()
+  endif()
+  if (NOT ROSSDL_LOCAL_ARTIFACTS_NO_VOID)
     set(ROSSDL_LOCAL_ARTIFACTS_NO_VOID "None")
   endif()
 
   if (NOT ${PROJECT_NAME} IN_LIST ROSSDL_SYSTEMS)
     file(GLOB ROSSDL_LOCAL_SYSTEMS_NO_VOID "${CMAKE_CURRENT_SOURCE_DIR}/*.rossystem")
-  else()
+  endif()
+  if (NOT ROSSDL_LOCAL_SYSTEMS_NO_VOID)
     set(ROSSDL_LOCAL_SYSTEMS_NO_VOID "None")
   endif()
 
@@ -131,4 +135,4 @@ macro(rossdl_generate_system description_file system )
   )
 
 endmacro() 
-          
+           

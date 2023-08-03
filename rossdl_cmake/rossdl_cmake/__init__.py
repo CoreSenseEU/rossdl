@@ -245,17 +245,21 @@ def generate_file(package, artifacts_file, file_in, file_out):
 
 def get_system_remappings(system_info, arfifacts):
     connections = system_info['connections']
-    
+        
+    all_arfifacts = {}
+    for system in arfifacts.keys():
+        all_arfifacts.update(arfifacts[system]['artifacts'])
+
     remappings = {}
     for connection in connections:
         origin = connection[0].split('/')[1]
         destiny = connection[1].split('/')[1]
 
-        if origin in list(arfifacts.keys()):
+        if origin in list(all_arfifacts.keys()):
             if origin not in remappings.keys():
                 remappings[origin] = []
             remappings[origin].append((connection[0], connection[1]))
-        elif destiny in list(arfifacts.keys()):
+        elif destiny in list(all_arfifacts.keys()):
             if destiny not in remappings.keys():
                 remappings[destiny] = []
             remappings[destiny].append((connection[1], connection[0]))
@@ -265,6 +269,10 @@ def get_system_remappings(system_info, arfifacts):
 def get_system_parameters(system_info, arfifacts):
     parameters = system_info['parameters']
 
+    all_arfifacts = {}
+    for system in arfifacts.keys():
+        all_arfifacts.update(arfifacts[system]['artifacts'])
+
     parameters_ret = {}
     for parameter in parameters:
         parameter_name = parameter[0].split('/')[2]
@@ -272,7 +280,7 @@ def get_system_parameters(system_info, arfifacts):
         value = parameter[1]
 
         if node_name == '*':
-            for node in list(arfifacts.keys()):
+            for node in list(all_arfifacts.keys()):
                 if node not in parameters_ret.keys():
                     parameters_ret[node] = []
                 parameters_ret[node].append((parameter_name, value))
@@ -301,7 +309,7 @@ def generate_launch(package, file_in, launch_in, file_out, system, systems_data,
     data_and_system['systems_data'] = systems_data
     data_and_system['artifacts'] = artifacts_data
 
-    print(artifacts_data)
+    # print(artifacts_data)
 
     file_output = StringIO()
     content = ''
@@ -362,11 +370,11 @@ def get_data_resource(ids, resource):
     try:
         contents = [get_resource(resource, a) for a in ids]
     
+        data = {}
         content = ''
         for c in contents:
-            content = content + c[0]
-
-        data = yaml.load(content, Loader=SafeLoader)
+            # print('YAML loading {}'.format(c[0]))
+            data.update(yaml.load(c[0], Loader=SafeLoader))
 
         return data
     except LookupError:
@@ -377,13 +385,13 @@ def generate_system(package, file_in, file_out, system, artifacts, local_artifac
     resources_dir = os.path.join(get_package_share_directory('rossdl_cmake'), 'resources')
     launch_in = os.path.join(resources_dir, 'launcher.py.em')
 
-    print('===========================================')
-    print('Genarating System {}'.format(system))
-    print('artifacts: {}'.format(artifacts))
-    print('local_artifacts: {}'.format(local_artifacts))
-    print('systems: {}'.format(systems))
-    print('local_systems: {}'.format(local_systems))
-    print('===========================================')
+    # print('===========================================')
+    # print('Genarating System {}'.format(system))
+    # print('artifacts: {}'.format(artifacts))
+    # print('local_artifacts: {}'.format(local_artifacts))
+    # print('systems: {}'.format(systems))
+    # print('local_systems: {}'.format(local_systems))
+    # print('===========================================')
 
     artifacts = [x for x in artifacts if x != 'None']
     local_artifacts = [x for x in local_artifacts if x != 'None']
@@ -396,46 +404,47 @@ def generate_system(package, file_in, file_out, system, artifacts, local_artifac
     if len(artifacts) > 0:
         artifacts_data = get_data_resource(artifacts, 'rossdl_artifact_descriptions')
     
-    print('Reading local artifacts')
+    # print('Reading local artifacts')
     try:
         if len(local_artifacts) > 0:
             for local_artficact in local_artifacts:
-                print('Reading ' + local_artficact)
+                # print('Reading ' + local_artficact)
                 with open(local_artficact, 'r') as f:
                     local_artifact_data = yaml.load(f.read(), Loader=SafeLoader)
-                    print(local_artifact_data),
-                    print('------>'),
+                    # print(local_artifact_data),
+                    # print('------>'),
                     artifacts_data.update(local_artifact_data)
-                    print(artifacts_data)
+                    # print(artifacts_data)
     except LookupError:
         print("Error reading local_artifacts")
 
     if len(systems) > 0:
         systems_data = get_data_resource(systems, 'rossdl_system_descriptions')
 
-    print('Reading local systems')
+    # print('Reading local systems')
     try:
         if len(local_systems) > 0:
             for local_systems in local_systems:
-                print('Reading ' + local_systems)
+                # print('Reading ' + local_systems)
                 with open(local_systems, 'r') as f:
                     local_systems_data = yaml.load(f.read(), Loader=SafeLoader)
-                    print(local_systems_data),
-                    print('------>'),
+                    # print(local_systems_data),
+                    # print('------>'),
                     systems_data.update(local_systems_data)
-                    print(systems_data)
+                    # print(systems_data)
     except LookupError:
         print("Error reading local_artifacts")
 
-    print("Artifacts =============================")
-    print(artifacts)
-    print("Systems =============================")
-    print(systems)
-    print("Artifacts Data =============================")
-    print(artifacts_data)
-    print("Systems =============================")
-    print(systems_data)
+    # print("=======================================================================================")
+    # print("Artifacts =============================")
+    # print(artifacts)
+    # print("Systems =============================")
+    # print(systems)
+    # print("Artifacts Data =============================")
+    # print(artifacts_data)
+    # print("Systems Data =============================")
+    # print(systems_data)
+    # print("=======================================================================================")
 
-    ## ACABO DE METER LO DE FILE_IN PORQUE PARECE QUE NO USA EL FICHERO DE ENTRADA
     generate_launch(package, file_in, launch_in, file_out, system, systems_data, artifacts_data)
  

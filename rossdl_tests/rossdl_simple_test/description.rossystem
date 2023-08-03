@@ -11,7 +11,7 @@ rossdl_simple_test:
         - [/consumer/image_out, /other_node/image_in]
       parameters:
         - [/image_filter/description_label, 'image raw']
-        - [/*/use_sim_time, False]
+        - [/*/use_sim_time, True]
     system_2:
       nodes: [rossdl_simple_test::image_filter, rossdl_simple_test::consumer]
       connections:
@@ -20,4 +20,3 @@ rossdl_simple_test:
       parameters:
         - [/image_filter/description_label, 'image compressed']
         - [/*/use_sim_time, False]   
-     

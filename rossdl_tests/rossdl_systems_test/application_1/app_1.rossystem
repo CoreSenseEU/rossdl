@@ -1,5 +1,5 @@
 ---
-app_1:
+application_1:
   fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
   systems:
     app_1_system_1:

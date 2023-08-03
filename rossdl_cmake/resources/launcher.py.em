@@ -12,12 +12,11 @@ system_name = locals()['system']
 package_name = locals()['package']
 systems_data = locals()['systems_data']
 arfifacts = locals()['artifacts']
-local_arfifacts = arfifacts[package_name]['artifacts']
 
 system_info = systems_data[package_name]['systems'][system_name]
 
-remappings = get_system_remappings(system_info, local_arfifacts)
-parameters = get_system_parameters(system_info, local_arfifacts)
+remappings = get_system_remappings(system_info, arfifacts)
+parameters = get_system_parameters(system_info, arfifacts)
 }@
 
 from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes
@@ -71,16 +70,18 @@ node_name = node[0]
                         @(remap),
 @[  end for]                    ],
                     parameters=[{
-@[  for parameter in parameters[node_name]]@
+@[  if node_name in list(parameters)]@
+@[      for parameter in parameters[node_name]]@
 @{
 param_key = parameter[0]
 param_value = parameter[1]
-}@[      if isinstance(param_value, str)]@
+}@[         if isinstance(param_value, str)]@
                         '@(param_key)': '@(param_value)',
-@[      else]@
+@[          else]@
                         '@(param_key)': @(param_value),
-@[      end if]@
-@[  end for]                    }],
+@[          end if]@
+@[      end for]@
+@[    end if]@                     }],
                 ),
 @[end for]@
     ])
