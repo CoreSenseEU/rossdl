@@ -6,6 +6,7 @@
 from rossdl_cmake import get_system_nodes
 from rossdl_cmake import get_system_remappings
 from rossdl_cmake import get_system_parameters
+from rossdl_cmake import expand_subsystems
 
 
 system_name = locals()['system']
@@ -15,11 +16,13 @@ arfifacts = locals()['artifacts']
 
 system_info = systems_data[package_name]['systems'][system_name]
 
+expand_subsystems(system_info, systems_data)
+
 remappings = get_system_remappings(system_info, arfifacts)
 parameters = get_system_parameters(system_info, arfifacts)
 }@
 
-from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes
+from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
 from launch import LaunchDescription
 from launch_ros.actions import Node

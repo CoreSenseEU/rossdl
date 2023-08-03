@@ -283,7 +283,8 @@ def get_system_parameters(system_info, arfifacts):
             for node in list(all_arfifacts.keys()):
                 if node not in parameters_ret.keys():
                     parameters_ret[node] = []
-                parameters_ret[node].append((parameter_name, value))
+                if (parameter_name, value) not in parameters_ret[node]:
+                    parameters_ret[node].append((parameter_name, value))
         else:
             if node_name not in parameters_ret.keys():
                 parameters_ret[node_name] = []
@@ -365,6 +366,22 @@ def get_artifacts_data(artifacts):
     artifacts_data = yaml.safe_load_all(artifact_content)   
 
     return artifacts_data
+
+def expand_subsystems(system_info, systems_data):
+    if 'subsystems' not in list(system_info.keys()):
+        return
+
+    for subsystem in system_info['subsystems']:
+        package = subsystem.split('::')[0]
+        system = subsystem.split('::')[1]
+
+        subsystem_info = systems_data[package]['systems'][system]
+        if 'subsystems' in list(subsystem_info.keys()):
+            expand_subsystems(subsystem_info, systems_data)
+
+        system_info['nodes'].extend(subsystem_info['nodes'])
+        system_info['connections'].extend(subsystem_info['connections'])
+        system_info['parameters'].extend(subsystem_info['parameters'])
 
 def get_data_resource(ids, resource):
     try:

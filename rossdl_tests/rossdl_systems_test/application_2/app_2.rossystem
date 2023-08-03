@@ -1,9 +1,9 @@
 ---
-app_2:
+application_2:
   fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
   systems:
     app_2_system_1:
-      systems: [app_2::system_a_basic]
+      subsystems: [system_a::system_a_basic]
       nodes: [system_b::consumer]
       connections:
         - [/image_filter/image_out, /consumer/image_in]

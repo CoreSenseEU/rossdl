@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(application_2)
+project(application_3)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -8,8 +8,8 @@ find_package(rossdl_cmake REQUIRED)
 
 
 rossdl_generate_system(
-  "app_2.rossystem"
-  "app_2_system_1"
+  "app_3.rossystem"
+  "app_3_system_1"
 )
 
 ament_package()
