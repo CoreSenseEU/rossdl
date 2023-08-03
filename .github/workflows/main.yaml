@@ -23,6 +23,6 @@ jobs:
           required-ros-distributions: humble
       - uses: ros-tooling/action-ros-ci@v0.3
         with:
-          package-name: rossdl_cmake rossdl_test
+          package-name: rossdl_cmake rossdl_simple_test system_a system_b application_1 application_2 application_3
           target-ros2-distro: humble
 
