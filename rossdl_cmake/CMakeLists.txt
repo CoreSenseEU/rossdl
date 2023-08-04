@@ -30,6 +30,7 @@ install(
 install(
   FILES
     tests/description.ros2
+    tests/description.rossystem
     tests/Nodes.hpp.test
     tests/Nodes.cpp.test
     tests/system_1.launch.py.test

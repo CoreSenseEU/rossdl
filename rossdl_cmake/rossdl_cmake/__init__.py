@@ -17,7 +17,7 @@ import os
 import sys
 
 from ament_index_python.packages import get_package_share_directory
-from ament_index_python.resources import get_resource, get_search_paths
+from ament_index_python.resources import get_resource
 import em
 import yaml
 from yaml.loader import SafeLoader
@@ -245,7 +245,7 @@ def generate_file(package, artifacts_file, file_in, file_out):
 
 def get_system_remappings(system_info, arfifacts):
     connections = system_info['connections']
-        
+
     all_arfifacts = {}
     for system in arfifacts.keys():
         all_arfifacts.update(arfifacts[system]['artifacts'])
@@ -357,15 +357,17 @@ def generate_launch(package, file_in, launch_in, file_out, system, systems_data,
     with open(file_out, 'w', encoding='utf-8') as h:
         h.write(content)
 
+
 def get_artifacts_data(artifacts):
     artifact_contents = [get_resource('rossdl_artifact_descriptions', a) for a in artifacts]
     artifact_content = ''
     for c in artifact_contents:
         artifact_content = artifact_content + c[0]
 
-    artifacts_data = yaml.safe_load_all(artifact_content)   
+    artifacts_data = yaml.safe_load_all(artifact_content)
 
     return artifacts_data
+
 
 def expand_subsystems(system_info, systems_data):
     if 'subsystems' not in list(system_info.keys()):
@@ -383,22 +385,24 @@ def expand_subsystems(system_info, systems_data):
         system_info['connections'].extend(subsystem_info['connections'])
         system_info['parameters'].extend(subsystem_info['parameters'])
 
+
 def get_data_resource(ids, resource):
     try:
         contents = [get_resource(resource, a) for a in ids]
-    
+
         data = {}
-        content = ''
         for c in contents:
             # print('YAML loading {}'.format(c[0]))
             data.update(yaml.load(c[0], Loader=SafeLoader))
 
         return data
     except LookupError:
-        print("Resources are not ready. Maybe you should source your workspace and build again")
+        print('Resources are not ready. Maybe you should source your workspace and build again')
         return {}
 
-def generate_system(package, file_in, file_out, system, artifacts, local_artifacts, systems, local_systems):
+
+def generate_system(package, file_in, file_out, system, artifacts,
+                    local_artifacts, systems, local_systems):
     resources_dir = os.path.join(get_package_share_directory('rossdl_cmake'), 'resources')
     launch_in = os.path.join(resources_dir, 'launcher.py.em')
 
@@ -417,10 +421,10 @@ def generate_system(package, file_in, file_out, system, artifacts, local_artifac
 
     artifacts_data = {}
     systems_data = {}
-    
+
     if len(artifacts) > 0:
         artifacts_data = get_data_resource(artifacts, 'rossdl_artifact_descriptions')
-    
+
     # print('Reading local artifacts')
     try:
         if len(local_artifacts) > 0:
@@ -433,7 +437,7 @@ def generate_system(package, file_in, file_out, system, artifacts, local_artifac
                     artifacts_data.update(local_artifact_data)
                     # print(artifacts_data)
     except LookupError:
-        print("Error reading local_artifacts")
+        print('Error reading local_artifacts')
 
     if len(systems) > 0:
         systems_data = get_data_resource(systems, 'rossdl_system_descriptions')
@@ -450,7 +454,7 @@ def generate_system(package, file_in, file_out, system, artifacts, local_artifac
                     systems_data.update(local_systems_data)
                     # print(systems_data)
     except LookupError:
-        print("Error reading local_artifacts")
+        print('Error reading local_artifacts')
 
     # print("=======================================================================================")
     # print("Artifacts =============================")
@@ -464,4 +468,3 @@ def generate_system(package, file_in, file_out, system, artifacts, local_artifac
     # print("=======================================================================================")
 
     generate_launch(package, file_in, launch_in, file_out, system, systems_data, artifacts_data)
- 

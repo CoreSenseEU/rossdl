@@ -76,7 +76,7 @@ macro(rossdl_generate_code description_file)
     OUTPUT ${_source_out_file} ${_header_out_file}
     COMMAND ros2
       ARGS run rossdl_cmake sdl_generator_cpp
-        --package ${PROJECT_NAME} 
+        --package ${PROJECT_NAME}
         --description-file ${_abs_file}
         --header-out-file ${_header_out_file}
         --source-out-file ${_source_out_file}
@@ -98,4 +98,3 @@ macro(rossdl_generate_code description_file)
   )
 
 endmacro()
-     

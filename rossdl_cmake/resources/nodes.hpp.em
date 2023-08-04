@@ -111,4 +111,3 @@ subscribers_info = get_subscriptions_name_type_from_node(package_name, arfifacts
 }  // namespace @(package_name)
 
 #endif  // @(header_guard)
-   

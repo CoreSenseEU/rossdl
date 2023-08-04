@@ -135,4 +135,3 @@ protected:
 }  // namespace rossdl_test
 
 #endif  // ROSSDL_TEST__NODES_HPP_
-  

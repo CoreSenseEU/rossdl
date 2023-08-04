@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-macro(rossdl_generate_system description_file system )
+macro(rossdl_generate_system description_file system)
   get_filename_component(_extension ${description_file} LAST_EXT)
 
   if("${_extension}" STREQUAL "")
@@ -73,47 +73,47 @@ macro(rossdl_generate_system description_file system )
   ament_index_get_resources(ROSSDL_ARTIFACTS rossdl_artifact_descriptions)
   ament_index_get_resources(ROSSDL_SYSTEMS rossdl_system_descriptions)
 
-  if (ROSSDL_ARTIFACTS)
+  if(ROSSDL_ARTIFACTS)
     set(ROSSDL_ARTIFACTS_NO_VOID ${ROSSDL_ARTIFACTS})
   endif()
-  if (NOT ROSSDL_ARTIFACTS)
+  if(NOT ROSSDL_ARTIFACTS)
     set(ROSSDL_ARTIFACTS_NO_VOID "None")
   endif()
 
-  if (ROSSDL_SYSTEMS)
+  if(ROSSDL_SYSTEMS)
     set(ROSSDL_SYSTEMS_NO_VOID ${ROSSDL_SYSTEMS})
   endif()
-  if (NOT ROSSDL_SYSTEMS_NO_VOID)
+  if(NOT ROSSDL_SYSTEMS_NO_VOID)
     set(ROSSDL_SYSTEMS_NO_VOID "None")
   endif()
 
-  if (NOT ${PROJECT_NAME} IN_LIST ROSSDL_ARTIFACTS)
+  if(NOT ${PROJECT_NAME} IN_LIST ROSSDL_ARTIFACTS)
     file(GLOB ROSSDL_LOCAL_ARTIFACTS_NO_VOID "${CMAKE_CURRENT_SOURCE_DIR}/*.ros2")
   endif()
-  if (NOT ROSSDL_LOCAL_ARTIFACTS_NO_VOID)
+  if(NOT ROSSDL_LOCAL_ARTIFACTS_NO_VOID)
     set(ROSSDL_LOCAL_ARTIFACTS_NO_VOID "None")
   endif()
 
-  if (NOT ${PROJECT_NAME} IN_LIST ROSSDL_SYSTEMS)
+  if(NOT ${PROJECT_NAME} IN_LIST ROSSDL_SYSTEMS)
     file(GLOB ROSSDL_LOCAL_SYSTEMS_NO_VOID "${CMAKE_CURRENT_SOURCE_DIR}/*.rossystem")
   endif()
-  if (NOT ROSSDL_LOCAL_SYSTEMS_NO_VOID)
+  if(NOT ROSSDL_LOCAL_SYSTEMS_NO_VOID)
     set(ROSSDL_LOCAL_SYSTEMS_NO_VOID "None")
   endif()
 
-  MESSAGE(STATUS "ROSSDL_ARTIFACT_NO_VOID: " ${ROSSDL_ARTIFACTS_NO_VOID})# 
-  MESSAGE(STATUS "ROSSDL_LOCAL_ARTIFACTS_NO_VOID: " ${ROSSDL_LOCAL_ARTIFACTS_NO_VOID})
-  MESSAGE(STATUS "ROSSDL_SYSTEMS_NO_VOID: " ${ROSSDL_SYSTEMS_NO_VOID})
-  MESSAGE(STATUS "ROSSDL_LOCAL_SYSTEMS_NO_VOID: " ${ROSSDL_LOCAL_SYSTEMS_NO_VOID})
+  message()(STATUS "ROSSDL_ARTIFACT_NO_VOID: " ${ROSSDL_ARTIFACTS_NO_VOID})
+  message(STATUS "ROSSDL_LOCAL_ARTIFACTS_NO_VOID: " ${ROSSDL_LOCAL_ARTIFACTS_NO_VOID})
+  message(STATUS "ROSSDL_SYSTEMS_NO_VOID: " ${ROSSDL_SYSTEMS_NO_VOID})
+  message(STATUS "ROSSDL_LOCAL_SYSTEMS_NO_VOID: " ${ROSSDL_LOCAL_SYSTEMS_NO_VOID})
 
   add_custom_command(
     OUTPUT ${_launch_out_file}
     COMMAND ros2
     ARGS run rossdl_cmake sdl_generator_launch
-        --package ${PROJECT_NAME} 
+        --package ${PROJECT_NAME}
         --description-file ${_abs_file}
-        --artifacts ${ROSSDL_ARTIFACTS_NO_VOID} 
-        --local-artifacts ${ROSSDL_LOCAL_ARTIFACTS_NO_VOID} 
+        --artifacts ${ROSSDL_ARTIFACTS_NO_VOID}
+        --local-artifacts ${ROSSDL_LOCAL_ARTIFACTS_NO_VOID}
         --systems ${ROSSDL_SYSTEMS_NO_VOID}
         --local-systems ${ROSSDL_LOCAL_SYSTEMS_NO_VOID}
         --launch-out-file ${_launch_out_file}
@@ -122,8 +122,8 @@ macro(rossdl_generate_system description_file system )
     COMMENT "Generating launcher for ROS 2 System: ${system}"
     VERBATIM
   )
-  
-  add_custom_target(file_toucher 
+
+  add_custom_target(file_toucher
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${_abs_file})
 
   add_custom_target(${PROJECT_NAME}_run ALL
@@ -134,5 +134,4 @@ macro(rossdl_generate_system description_file system )
     DESTINATION share/${PROJECT_NAME}/launch
   )
 
-endmacro() 
-           
+endmacro()
