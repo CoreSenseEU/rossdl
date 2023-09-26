@@ -13,29 +13,29 @@
 // limitations under the License.
 
 
-#ifndef ROSSDL_TEST__IMAGEFILTER_HPP_
-#define ROSSDL_TEST__IMAGEFILTER_HPP_
+#ifndef ROSSDL_SIMPLE_TEST__CONSUMER_HPP_
+#define ROSSDL_SIMPLE_TEST__CONSUMER_HPP_
 
 #include "sensor_msgs/msg/image.hpp"
 #include "std_msgs/msg/string.hpp"
 
-#include "rossdl_test/Nodes.hpp"
+#include "rossdl_simple_test/Nodes.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace rossdl_test
+namespace rossdl_simple_test
 {
 
-class ImageFilter : public ImageFilterBase
+class Consumer : public ConsumerBase
 {
 public:
-  explicit ImageFilter(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit Consumer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 protected:
   virtual void image_in_callback(sensor_msgs::msg::Image::SharedPtr msg);
-  virtual void laser_in_callback(sensor_msgs::msg::LaserScan::SharedPtr msg);
+  virtual void description_in_callback(std_msgs::msg::String::SharedPtr msg);
 };
 
-}  // namespace rossdl_test
+}  // namespace rossdl_simple_test
 
-#endif  // ROSSDL_TEST__IMAGEFILTER_HPP_
+#endif  // ROSSDL_SIMPLE_TEST__CONSUMER_HPP_

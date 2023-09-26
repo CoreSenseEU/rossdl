@@ -1,0 +1,13 @@
+---
+application_2:
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  systems:
+    app_2_system_1:
+      subsystems: [system_a::system_a_basic]
+      nodes: [system_b::consumer]
+      connections:
+        - [/image_filter/image_out, /consumer/image_in]
+        - [/image_filter/description_out, /consumer/description_in]
+        - [/consumer/image_out, /other_node/image_in]
+      parameters:
+        - [/*/use_sim_time, False]

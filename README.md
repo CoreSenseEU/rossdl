@@ -9,7 +9,7 @@ It starts from a file like this:
 ```
 ---
 rossdl_test:
-  FromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
   artifacts:
     image_filter:
       node: "image_filter"
@@ -55,7 +55,7 @@ Just place a definition file in your package, add this to CMakeLists:
 
 ```
 rossdl_generate_code(${PROJECT_NAME}
-  "description.sdl"
+  "description.ros2"
   ${dependencies}
 )
 ```

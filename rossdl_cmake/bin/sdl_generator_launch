@@ -27,9 +27,33 @@ def main(argv=sys.argv[1:]):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument(
+        '--package',
+        required=True,
+        help='The current package')
+    parser.add_argument(
         '--description-file',
         required=True,
         help='The location of the file containing the description')
+    parser.add_argument(
+        '--artifacts',
+        nargs='+',
+        # required=True,
+        help='The resource containing the artifact descriptions')
+    parser.add_argument(
+        '--local-artifacts',
+        nargs='+',
+        # required=True,
+        help='The location of the file containing the artifact descriptions')
+    parser.add_argument(
+        '--systems',
+        nargs='+',
+        # required=True,
+        help='The resource containing the system descriptions')
+    parser.add_argument(
+        '--local-systems',
+        nargs='+',
+        # required=True,
+        help='The location of the file containing the system descriptions')
     parser.add_argument(
         '--launch-out-file',
         required=True,
@@ -41,8 +65,8 @@ def main(argv=sys.argv[1:]):
 
     args = parser.parse_args(argv)
 
-    generate_system(args.description_file,
-                 args.launch_out_file, args.system)
+    generate_system(args.package, args.description_file,
+                 args.launch_out_file, args.system, args.artifacts, args.local_artifacts, args.systems, args.local_systems)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,18 @@
+---
+system_b:
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  artifacts:
+    consumer:
+      node: "consumer"
+      subscribers:
+        image_in:
+          type: "sensor_msgs/msg/Image"
+          qos:
+            qos_profile: "sensor_qos"
+        description_in:
+          type: "std_msgs/msg/String"
+      publishers:
+        image_out:
+          type: "sensor_msgs/msg/Image"
+          qos:
+            qos_profile: "sensor_qos"

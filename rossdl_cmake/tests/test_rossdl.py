@@ -38,67 +38,75 @@ class TestROSSDL(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.filename = os.path.join(get_package_share_directory(
-            'rossdl_cmake'), 'description.sdl')
+        self.filename_ros2 = os.path.join(get_package_share_directory(
+            'rossdl_cmake'), 'description.ros2')
+        self.filename_rossystem = os.path.join(get_package_share_directory(
+            'rossdl_cmake'), 'description.rossystem')
 
     def test_read_description(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data = rossdl_cmake.read_description(self.filename_ros2)
         self.assertNotEqual(yaml_data, {})
 
-    def test_get_package_name(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
-        self.assertEqual(rossdl_cmake.get_package_name(yaml_data), 'rossdl_test')
-
     def test_get_node_names(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
-        self.assertEqual(rossdl_cmake.get_node_names(yaml_data),
+        yaml_data = rossdl_cmake.read_description(self.filename_ros2)
+        self.assertEqual(rossdl_cmake.get_node_names('rossdl_test', yaml_data),
                          ['image_filter', 'consumer'])
 
     def test_get_publishers_name_type_from_node(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data = rossdl_cmake.read_description(self.filename_ros2)
         self.assertEqual(
-            rossdl_cmake.get_publishers_name_type_from_node(yaml_data, 'image_filter'),
+            rossdl_cmake.get_publishers_name_type_from_node('rossdl_test',
+                                                            yaml_data, 'image_filter'),
             [('image_out', 'sensor_msgs::msg::Image'),
              ('description_out', 'std_msgs::msg::String')
              ])
         self.assertEqual(
-            rossdl_cmake.get_publishers_name_type_from_node(yaml_data, 'consumer'),
+            rossdl_cmake.get_publishers_name_type_from_node('rossdl_test', yaml_data, 'consumer'),
             [('image_out', 'sensor_msgs::msg::Image')])
 
     def test_get_qos_from_node_topic(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data = rossdl_cmake.read_description(self.filename_ros2)
 
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'image_filter', 'image_out'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'image_filter', 'image_out'),
             'rclcpp::SensorDataQoS().reliable()')
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'image_filter', 'description_out'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'image_filter', 'description_out'),
             'rclcpp::QoS(100)')
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'image_filter', 'image_in'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'image_filter', 'image_in'),
             'rclcpp::SensorDataQoS()')
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'image_filter', 'laser_in'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'image_filter', 'laser_in'),
             'rclcpp::SensorDataQoS().reliable()')
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'consumer', 'image_in'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'consumer', 'image_in'),
             'rclcpp::SensorDataQoS()')
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'consumer', 'description_in'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'consumer', 'description_in'),
             '100')
         self.assertEqual(
-            rossdl_cmake.get_qos_from_node_topic(yaml_data, 'consumer', 'image_out'),
+            rossdl_cmake.get_qos_from_node_topic('rossdl_test', yaml_data,
+                                                 'consumer', 'image_out'),
             'rclcpp::SensorDataQoS()')
 
     def test_get_subscriptions_name_type_from_node(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data = rossdl_cmake.read_description(self.filename_ros2)
         self.assertEqual(
-            rossdl_cmake.get_subscriptions_name_type_from_node(yaml_data, 'image_filter'),
+            rossdl_cmake.get_subscriptions_name_type_from_node('rossdl_test', yaml_data,
+                                                               'image_filter'),
             [('image_in', 'sensor_msgs::msg::Image'),
              ('laser_in', 'sensor_msgs::msg::LaserScan')
              ])
         self.assertEqual(
-            rossdl_cmake.get_subscriptions_name_type_from_node(yaml_data, 'consumer'),
+            rossdl_cmake.get_subscriptions_name_type_from_node('rossdl_test', yaml_data,
+                                                               'consumer'),
             [('image_in', 'sensor_msgs::msg::Image'),
              ('description_in', 'std_msgs::msg::String')
              ])
@@ -112,9 +120,8 @@ class TestROSSDL(unittest.TestCase):
             'Consumer')
 
     def test_get_header_guard(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
         self.assertEqual(
-            rossdl_cmake.get_header_guard(yaml_data),
+            rossdl_cmake.get_header_guard('rossdl_test'),
             'ROSSDL_TEST__NODES_HPP_')
 
     def test_get_message_header_from_type(self):
@@ -140,12 +147,12 @@ class TestROSSDL(unittest.TestCase):
             'float')
 
     def test_get_parameters_info(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data = rossdl_cmake.read_description(self.filename_ros2)
         self.assertEqual(
-            rossdl_cmake.get_parameters_info(yaml_data, 'image_filter'),
+            rossdl_cmake.get_parameters_info('rossdl_test', yaml_data, 'image_filter'),
             [('description_label', 'std::string', 'default image')])
         self.assertEqual(
-            rossdl_cmake.get_parameters_info(yaml_data, 'consumer'),
+            rossdl_cmake.get_parameters_info('rossdl_test', yaml_data, 'consumer'),
             [])
 
     def test_generate_cpp(self):
@@ -161,7 +168,8 @@ class TestROSSDL(unittest.TestCase):
         test_hpp_filename = '/tmp/Nodes.hpp'
         test_cpp_filename = '/tmp/Nodes.cpp'
 
-        rossdl_cmake.generate_cpp(self.filename, test_hpp_filename, test_cpp_filename)
+        rossdl_cmake.generate_cpp('rossdl_test', self.filename_ros2,
+                                  test_hpp_filename, test_cpp_filename)
 
         with open(good_hpp_filename) as f:
             good_hpp_content = f.read()
@@ -176,8 +184,11 @@ class TestROSSDL(unittest.TestCase):
         self.assertEqual(len(good_cpp_content), len(test_cpp_content))
 
     def test_get_system_remappings(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
-        remappings = rossdl_cmake.get_system_remappings(yaml_data['rossdl_test'], 'system_1')
+        yaml_data_rossystem = rossdl_cmake.read_description(self.filename_rossystem)
+        yaml_data_ros2 = rossdl_cmake.read_description(self.filename_ros2)
+
+        remappings = rossdl_cmake.get_system_remappings(
+            yaml_data_rossystem['rossdl_test']['systems']['system_1'], yaml_data_ros2)
 
         self.assertEqual(
             remappings,
@@ -193,46 +204,45 @@ class TestROSSDL(unittest.TestCase):
             })
 
     def test_get_system_parameters(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data_rossystem = rossdl_cmake.read_description(self.filename_rossystem)
+        yaml_data_ros2 = rossdl_cmake.read_description(self.filename_ros2)
+
         data_and_system = {}
-        data_and_system['data'] = yaml_data
+        data_and_system['data'] = yaml_data_rossystem
         data_and_system['system'] = 'rossdl_test'
 
-        parameters = rossdl_cmake.get_system_parameters(yaml_data['rossdl_test'], 'system_1')
+        parameters = rossdl_cmake.get_system_parameters(
+            yaml_data_rossystem['rossdl_test']['systems']['system_1'], yaml_data_ros2)
 
         self.assertEqual(
             parameters,
             ({
                 'image_filter': [
                     ('description_label', 'image raw'),
-                    ('use_sim_time', False)],
+                    ('use_sim_time', True)],
                 'consumer': [
-                    ('use_sim_time', False)]
+                    ('use_sim_time', True)]
             }))
 
-    def test_get_system_to_generate(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
-        data_and_system = {}
-        data_and_system['data'] = yaml_data
-        data_and_system['system'] = 'rossdl_test'
-
-        self.assertEqual(
-            rossdl_cmake.get_system_to_generate(data_and_system),
-            'rossdl_test')
-
     def test_get_system_nodes(self):
-        yaml_data = rossdl_cmake.read_description(self.filename)
+        yaml_data = rossdl_cmake.read_description(self.filename_rossystem)
         data_and_system = {}
         data_and_system['data'] = yaml_data
         data_and_system['system'] = 'rossdl_test'
 
         self.assertEqual(
-            rossdl_cmake.get_system_nodes(data_and_system, 'system_1'),
+            rossdl_cmake.get_system_nodes(yaml_data['rossdl_test']['systems']['system_1']),
             [
                 ('image_filter', 'rossdl_test::ImageFilter'),
                 ('consumer', 'rossdl_test::Consumer')
             ])
 
+        self.assertEqual(
+            rossdl_cmake.get_system_nodes(yaml_data['rossdl_test']['systems']['system_2']),
+            [
+                ('image_filter', 'rossdl_test::ImageFilter'),
+                ('consumer', 'rossdl_test::Consumer')
+            ])
 #     def test_generate_system(self):
 #         good_launch_content = ''
 #         test_launch_content = ''
@@ -241,7 +251,7 @@ class TestROSSDL(unittest.TestCase):
 #             'rossdl_cmake'), 'system_1.launch.py.test')
 #         test_launch_filename = '/tmp/system_1.launch.py'
 #
-#         rossdl_cmake.generate_system(self.filename, test_launch_filename, 'system_1')
+#         rossdl_cmake.generate_system(self.filename_ros2, test_launch_filename, 'system_1')
 #
 #         with open(good_launch_filename) as f:
 #             good_launch_content = f.read()

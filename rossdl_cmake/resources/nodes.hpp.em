@@ -4,16 +4,17 @@
 @{
 from rossdl_cmake import get_header_guard
 from rossdl_cmake import get_message_headers
-from rossdl_cmake import get_package_name
 from rossdl_cmake import get_node_names
 from rossdl_cmake import get_class_names_from_node
 from rossdl_cmake import get_publishers_name_type_from_node
 from rossdl_cmake import get_subscriptions_name_type_from_node
 
-header_guard = get_header_guard(locals())
-package_name = get_package_name(locals())
-node_names = get_node_names(locals())
 
+arfifacts = locals()['artifacts']
+package_name = locals()['package']
+
+header_guard = get_header_guard(package_name)
+node_names = get_node_names(package_name, arfifacts)
 node_class_names = []
 for node_name in node_names:
     node_class_names.append((node_name, get_class_names_from_node(node_name)))
@@ -27,7 +28,7 @@ for node_name in node_names:
 #include <typeinfo>
 
 @{
-msg_headers = get_message_headers(locals())
+msg_headers = get_message_headers(package_name, arfifacts)
 }@
 @[for header_file in msg_headers]@
 #include "@(header_file)"
@@ -46,13 +47,13 @@ public:
 
 protected:
 @{
-publishers_info = get_publishers_name_type_from_node(locals(), node_name[0])
+publishers_info = get_publishers_name_type_from_node(package_name, arfifacts, node_name[0])
 }@
 @[    for publisher_info in publishers_info]@
   rclcpp::Publisher<@(publisher_info[1])>::SharedPtr @(publisher_info[0])_;
 @[    end for]@
 @{
-subscribers_info = get_subscriptions_name_type_from_node(locals(), node_name[0])
+subscribers_info = get_subscriptions_name_type_from_node(package_name, arfifacts, node_name[0])
 }@
 @[    for subscriber_info in subscribers_info]@
   rclcpp::Subscription<@(subscriber_info[1])>::SharedPtr @(subscriber_info[0])_;
@@ -110,4 +111,3 @@ subscribers_info = get_subscriptions_name_type_from_node(locals(), node_name[0])
 }  // namespace @(package_name)
 
 #endif  // @(header_guard)
-  

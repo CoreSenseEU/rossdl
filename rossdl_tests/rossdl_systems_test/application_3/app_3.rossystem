@@ -1,0 +1,9 @@
+---
+application_3:
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  systems:
+    app_3_system_1:
+      subsystems: [application_2::app_2_system_1]
+      nodes: []
+      connections: []
+      parameters: []

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>rossdl_test</name>
+  <name>application_3</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="fmrico@gmail.com">fmrico</maintainer>
@@ -12,9 +12,10 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>rossdl_cmake</depend>
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>backward_ros</depend>
+
+  <exec_depend>system_a</exec_depend>
+  <exec_depend>system_b</exec_depend>
+  <exec_depend>application_2</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

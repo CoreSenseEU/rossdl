@@ -3,22 +3,26 @@
 # generated code does not contain a copyright notice
 
 @{
-from rossdl_cmake import get_system_to_generate
-from rossdl_cmake import get_package_name
 from rossdl_cmake import get_system_nodes
 from rossdl_cmake import get_system_remappings
 from rossdl_cmake import get_system_parameters
+from rossdl_cmake import expand_subsystems
 
-system_name = get_system_to_generate(locals())
-data = locals()['data']
-package_name = get_package_name(data)
-system_info = data[package_name]['systems'][system_name]
 
-remappings = get_system_remappings(data[package_name], system_name)
-parameters = get_system_parameters(data[package_name], system_name)
+system_name = locals()['system']
+package_name = locals()['package']
+systems_data = locals()['systems_data']
+arfifacts = locals()['artifacts']
+
+system_info = systems_data[package_name]['systems'][system_name]
+
+expand_subsystems(system_info, systems_data)
+
+remappings = get_system_remappings(system_info, arfifacts)
+parameters = get_system_parameters(system_info, arfifacts)
 }@
 
-from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes
+from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -53,8 +57,7 @@ def generate_launch_description():
         target_container=container_name,
             composable_node_descriptions=[
 @{
-system = get_system_to_generate(locals())
-system_nodes = get_system_nodes(locals(), system)
+system_nodes = get_system_nodes(system_info)
 }@
 @[for node in system_nodes]@
 @{
@@ -70,16 +73,18 @@ node_name = node[0]
                         @(remap),
 @[  end for]                    ],
                     parameters=[{
-@[  for parameter in parameters[node_name]]@
+@[  if node_name in list(parameters)]@
+@[      for parameter in parameters[node_name]]@
 @{
 param_key = parameter[0]
 param_value = parameter[1]
-}@[      if isinstance(param_value, str)]@
+}@[         if isinstance(param_value, str)]@
                         '@(param_key)': '@(param_value)',
-@[      else]@
+@[          else]@
                         '@(param_key)': @(param_value),
-@[      end if]@
-@[  end for]                    }],
+@[          end if]@
+@[      end for]@
+@[    end if]@                     }],
                 ),
 @[end for]@
     ])

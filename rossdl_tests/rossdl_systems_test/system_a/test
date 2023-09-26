@@ -1,0 +1,11 @@
+---
+system_a:
+  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
+  systems:
+    system_a_basic:
+      nodes: [system_a::image_filter]
+      connections:
+        - [/camera/rgb/image_raw, /image_filter/image_in]
+      parameters:
+        - [/image_filter/description_label, 'image raw']
+        - [/*/use_sim_time, False]

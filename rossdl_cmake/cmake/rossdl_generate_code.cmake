@@ -62,6 +62,9 @@ macro(rossdl_generate_code description_file)
     endif()
   endforeach()
 
+  file(READ ${_abs_file} ARTIFACTS_DESCRIPTION)
+  ament_index_register_resource(rossdl_artifact_descriptions CONTENT ${ARTIFACTS_DESCRIPTION})
+
   set(RESOURCE_CPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.cpp.em)
   set(RESOURCE_HPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.hpp.em)
 
@@ -73,6 +76,7 @@ macro(rossdl_generate_code description_file)
     OUTPUT ${_source_out_file} ${_header_out_file}
     COMMAND ros2
       ARGS run rossdl_cmake sdl_generator_cpp
+        --package ${PROJECT_NAME}
         --description-file ${_abs_file}
         --header-out-file ${_header_out_file}
         --source-out-file ${_source_out_file}
@@ -91,11 +95,6 @@ macro(rossdl_generate_code description_file)
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION lib/${PROJECT_NAME}
-  )
-
-  install(FILES
-    ${_abs_file}
-    DESTINATION share/${PROJECT_NAME}
   )
 
 endmacro()
