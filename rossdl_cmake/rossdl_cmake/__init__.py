@@ -315,11 +315,13 @@ def generate_launch(package, file_in, launch_in, file_out, system, systems_data,
     file_output = StringIO()
     content = ''
     try:
+        em.Interpreter._wasProxyInstalled = False
         _interpreter = em.Interpreter(
             output=file_output,
             options={
                 em.BUFFERED_OPT: True,
                 em.RAW_OPT: True,
+                em.OVERRIDE_OPT: False,
             })
 
         with open(launch_in, 'r') as h:

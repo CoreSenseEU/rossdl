@@ -62,7 +62,8 @@ class TestROSSDL(unittest.TestCase):
 
         self.assertEqual(repo, 'https://github.com/jane-doe/project_example.git:branch')
         self.assertEqual(list(artifacts.keys()), ['image_filter', 'consumer'])
-        self.assertEqual(list(image_filter.keys()), ['node', 'publishers', 'subscribers', 'parameters'])
+        self.assertEqual(list(image_filter.keys()),
+                         ['node', 'publishers', 'subscribers', 'parameters'])
         self.assertEqual(list(consumer.keys()), ['node', 'subscribers', 'publishers'])
 
         self.assertEqual(list(image_filter_pubs.keys()), ['image_out', 'description_out'])
@@ -75,12 +76,14 @@ class TestROSSDL(unittest.TestCase):
         self.assertEqual(consumer_node, 'consumer')
 
         self.assertEqual(image_filter_pubs['image_out']['type'], 'sensor_msgs/msg/Image')
-        self.assertEqual(list(image_filter_pubs['image_out']['qos'].keys()), ['qos_profile', 'qos_reliability'])
+        self.assertEqual(list(image_filter_pubs['image_out']['qos'].keys()),
+                         ['qos_profile', 'qos_reliability'])
         self.assertEqual(image_filter_pubs['image_out']['qos']['qos_profile'], 'sensor_qos')
         self.assertEqual(image_filter_pubs['image_out']['qos']['qos_reliability'], 'reliable')
 
         self.assertEqual(image_filter_pubs['description_out']['type'], 'std_msgs/msg/String')
-        self.assertEqual(list(image_filter_pubs['description_out']['qos'].keys()), ['qos_history_depth'])
+        self.assertEqual(list(image_filter_pubs['description_out']['qos'].keys()),
+                         ['qos_history_depth'])
         self.assertEqual(image_filter_pubs['description_out']['qos']['qos_history_depth'], 100)
 
         self.assertEqual(image_filter_subs['image_in']['type'], 'sensor_msgs/msg/Image')
@@ -88,11 +91,13 @@ class TestROSSDL(unittest.TestCase):
         self.assertEqual(image_filter_subs['image_in']['qos']['qos_profile'], 'sensor_qos')
 
         self.assertEqual(image_filter_subs['laser_in']['type'], 'sensor_msgs/msg/LaserScan')
-        self.assertEqual(list(image_filter_subs['laser_in']['qos'].keys()), ['qos_profile', 'qos_reliability'])
+        self.assertEqual(list(image_filter_subs['laser_in']['qos'].keys()),
+                         ['qos_profile', 'qos_reliability'])
         self.assertEqual(image_filter_subs['laser_in']['qos']['qos_profile'], 'sensor_qos')
         self.assertEqual(image_filter_subs['laser_in']['qos']['qos_reliability'], 'reliable')
 
-        self.assertEqual(list(image_filter_params['description_label'].keys()), ['type', 'default'])
+        self.assertEqual(list(image_filter_params['description_label'].keys()), ['type',
+                                                                                 'default'])
         self.assertEqual(image_filter_params['description_label']['type'], 'string')
         self.assertEqual(image_filter_params['description_label']['default'], 'default image')
 
@@ -333,7 +338,6 @@ class TestROSSDL(unittest.TestCase):
                 ('consumer', 'rossdl_test::Consumer')
             ])
 
-
     def test_get_system_nodes_2(self):
         yaml_data = rossdl_cmake.read_description(self.filename_rossystem)
         data_and_system = {}
@@ -356,9 +360,11 @@ class TestROSSDL(unittest.TestCase):
         test_launch_filename = '/tmp/system_1.launch.py'
 
         artifacts = []
-        local_artifacts = [os.path.join(get_package_share_directory('rossdl_cmake'), 'description.ros2')]
+        local_artifacts = [os.path.join(get_package_share_directory('rossdl_cmake'),
+                                        'description.ros2')]
         systems = []
-        local_systems = [os.path.join(get_package_share_directory('rossdl_cmake'), 'description.rossystem')]
+        local_systems = [os.path.join(get_package_share_directory('rossdl_cmake'),
+                                      'description.rossystem')]
 
         rossdl_cmake.generate_system(
             'rossdl_test',
@@ -381,9 +387,11 @@ class TestROSSDL(unittest.TestCase):
         test_launch_filename = '/tmp/system_2.launch.py'
 
         artifacts = []
-        local_artifacts = [os.path.join(get_package_share_directory('rossdl_cmake'), 'description.ros2')]
+        local_artifacts = [os.path.join(get_package_share_directory('rossdl_cmake'),
+                                        'description.ros2')]
         systems = []
-        local_systems = [os.path.join(get_package_share_directory('rossdl_cmake'), 'description.rossystem')]
+        local_systems = [os.path.join(get_package_share_directory('rossdl_cmake'),
+                                      'description.rossystem')]
 
         rossdl_cmake.generate_system(
             'rossdl_test',
@@ -396,6 +404,7 @@ class TestROSSDL(unittest.TestCase):
             test_launch_content = f.read()
 
         self.assertEqual(len(good_launch_content), len(test_launch_content))
+
 
 if __name__ == '__main__':
     unittest.main()
