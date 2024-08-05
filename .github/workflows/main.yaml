@@ -18,11 +18,16 @@ jobs:
         os: [ubuntu-22.04]
       fail-fast: false
     steps:
-      - uses: ros-tooling/setup-ros@v0.6
+      - uses: ros-tooling/setup-ros@v0.7.1
         with:
           required-ros-distributions: humble
-      - uses: ros-tooling/action-ros-ci@v0.3
+      - uses: ros-tooling/action-ros-ci@v0.3.6
         with:
           package-name: rossdl_cmake rossdl_simple_test system_a system_b application_1 application_2 application_3
           target-ros2-distro: humble
-
+          colcon-defaults: |
+            {
+              "test": {
+                "parallel-workers" : 1
+              }
+            }
