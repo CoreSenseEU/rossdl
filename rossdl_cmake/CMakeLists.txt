@@ -27,19 +27,21 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(
-  FILES
-    tests/description.ros2
-    tests/description.rossystem
-    tests/Nodes.hpp.test
-    tests/Nodes.cpp.test
-    tests/system_1.launch.py.test
-  DESTINATION share/${PROJECT_NAME}
-)
-
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_rossdl tests/test_rossdl.py)
+
+  install(
+    FILES
+      tests/description.ros2
+      tests/description.rossystem
+      tests/Nodes.hpp.test
+      tests/Nodes.cpp.test
+      tests/system_1.launch.py.test
+      tests/system_2.launch.py.test
+    DESTINATION share/${PROJECT_NAME}
+  )
+
 endif()
 
 ament_package(
