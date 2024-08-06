@@ -22,10 +22,14 @@
 
 #include "gtest/gtest.h"
 
+using namespace std::chrono_literals;
 
 TEST(rossdl_generation_test, image_filter_unit)
 {
   auto image_filter = std::make_shared<system_a::ImageFilter>();
+
+  auto start = image_filter->now();
+  while (image_filter->now() - start < 100ms) {rclcpp::spin_some(image_filter);}
 
   // Parameters
   ASSERT_TRUE(image_filter->has_parameter("description_label"));

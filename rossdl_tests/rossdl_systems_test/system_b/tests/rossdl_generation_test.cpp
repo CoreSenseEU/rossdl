@@ -22,10 +22,14 @@
 
 #include "gtest/gtest.h"
 
+using namespace std::chrono_literals;
 
 TEST(rossdl_generation_test, consumer_unit)
 {
   auto consumer = std::make_shared<system_b::Consumer>();
+
+  auto start = consumer->now();
+  while (consumer->now() - start < 100ms) {rclcpp::spin_some(consumer);}
 
   auto topics = consumer->get_topic_names_and_types();
 

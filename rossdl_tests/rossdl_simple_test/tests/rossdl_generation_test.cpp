@@ -23,10 +23,14 @@
 
 #include "gtest/gtest.h"
 
+using namespace std::chrono_literals;
 
 TEST(rossdl_generation_test, image_filter_unit)
 {
   auto image_filter = std::make_shared<rossdl_simple_test::ImageFilter>();
+
+  auto start = image_filter->now();
+  while (image_filter->now() - start < 100ms) {rclcpp::spin_some(image_filter);}
 
   // Parameters
   ASSERT_TRUE(image_filter->has_parameter("description_label"));
@@ -80,6 +84,9 @@ TEST(rossdl_generation_test, image_filter_unit)
 TEST(rossdl_generation_test, consumer_unit)
 {
   auto consumer = std::make_shared<rossdl_simple_test::Consumer>();
+
+  auto start = consumer->now();
+  while (consumer->now() - start < 100ms) {rclcpp::spin_some(consumer);}
 
   auto topics = consumer->get_topic_names_and_types();
 
