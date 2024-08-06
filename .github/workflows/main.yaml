@@ -11,18 +11,21 @@ on:
 jobs:
   build-and-test:
     runs-on: ${{ matrix.os }}
-    container:
-      image: osrf/ros:humble-desktop
     strategy:
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-24.04]
       fail-fast: false
     steps:
-      - uses: ros-tooling/setup-ros@v0.6
+      - uses: ros-tooling/setup-ros@0.7.7
         with:
-          required-ros-distributions: humble
-      - uses: ros-tooling/action-ros-ci@v0.3
+          required-ros-distributions: rolling
+      - uses: ros-tooling/action-ros-ci@0.3.13
         with:
           package-name: rossdl_cmake rossdl_simple_test system_a system_b application_1 application_2 application_3
-          target-ros2-distro: humble
-
+          target-ros2-distro: rolling
+          colcon-defaults: |
+            {
+              "test": {
+                "parallel-workers" : 1
+              }
+            }

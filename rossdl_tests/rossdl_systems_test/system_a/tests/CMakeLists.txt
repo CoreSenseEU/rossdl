@@ -1,2 +1,3 @@
 ament_add_gtest(rossdl_generation_test rossdl_generation_test.cpp)
 target_link_libraries(rossdl_generation_test ${PROJECT_NAME})
+ament_target_dependencies(rossdl_generation_test ${dependencies} ament_index_cpp)

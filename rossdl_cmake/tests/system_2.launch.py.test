@@ -44,11 +44,10 @@ def generate_launch_description():
                     remappings = [
                         ('/image_filter/image_out', '/consumer/image_in'),
                         ('/image_filter/description_out', '/consumer/description_in'),
-                        ('/image_filter/image_in', '/camera/rgb/image_raw'),
                     ],
                     parameters=[{
-                        'description_label': 'image raw',
-                        'use_sim_time': True,
+                        'description_label': 'image compressed',
+                        'use_sim_time': False,
                     }],
                 ),
                 ComposableNode(
@@ -56,10 +55,9 @@ def generate_launch_description():
                     plugin = 'rossdl_test::Consumer',
                     name = 'consumer',
                     remappings = [
-                        ('/consumer/image_out', '/other_node/image_in'),
                     ],
                     parameters=[{
-                        'use_sim_time': True,
+                        'use_sim_time': False,
                     }],
                 ),
     ])

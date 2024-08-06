@@ -22,7 +22,7 @@ remappings = get_system_remappings(system_info, arfifacts)
 parameters = get_system_parameters(system_info, arfifacts)
 }@
 
-from launch_ros.actions import LoadComposableNodes
+from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -69,9 +69,9 @@ node_name = node[0]
                     plugin = '@(node[1])',
                     name = '@(node_name)',
                     remappings = [
-@[  for remap in remappings[node_name]]@
+@[  if node_name in remappings.keys()]@[      for remap in remappings[node_name]]@
                         @(remap),
-@[  end for]                    ],
+@[      end for]@[  end if]                    ],
                     parameters=[{
 @[  if node_name in list(parameters)]@
 @[      for parameter in parameters[node_name]]@
