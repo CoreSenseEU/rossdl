@@ -27,10 +27,10 @@ rossdl_generate_code(
   ${dependencies}
 )
 
-
 rossdl_generate_system(
   "description.rossystem"
   "system_1"
+  "system_2"
 )
 
 add_library(${PROJECT_NAME} SHARED
