@@ -1,12 +1,12 @@
-name: main
+name: rolling
 
 on:
   pull_request:
     branches:
-      - main
+      - rolling
   push:
     branches:
-      - main
+      - rolling
 
 jobs:
   build-and-test:

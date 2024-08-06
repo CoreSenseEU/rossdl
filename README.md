@@ -1,6 +1,6 @@
 # rossdl (ROS System Definition Language)
 
-[![main](https://github.com/fmrico/rossdl/actions/workflows/main.yaml/badge.svg)](https://github.com/fmrico/rossdl/actions/workflows/main.yaml)
+[![rolling](https://github.com/fmrico/rossdl/actions/workflows/rolling.yaml/badge.svg)](https://github.com/fmrico/rossdl/actions/workflows/rolling.yaml)
 
 
 This repo contains a code generator that automatically generate base class for ROS2 nodes.
