@@ -13,7 +13,11 @@
 # limitations under the License.
 
 
-macro(rossdl_generate_system description_file system)
+macro(rossdl_generate_system) # description_file systems)
+  set(ARGN_COPY ${ARGN})
+  set(description_file "${ARGV0}")
+  list(REMOVE_AT ARGN_COPY 0)
+
   get_filename_component(_extension ${description_file} LAST_EXT)
 
   if("${_extension}" STREQUAL "")
@@ -65,7 +69,6 @@ macro(rossdl_generate_system description_file system)
   set(RESOURCE_LAUNCH ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/launcher.py.em)
 
   string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_file "${_code_tuple}")
-  set(_launch_out_file  ${CMAKE_CURRENT_BINARY_DIR}/launch/${system}.launch.py)
 
   file(READ ${_abs_file} ROSSDL_SYSTEM_DESCRIPTION)
   ament_index_register_resource(rossdl_system_descriptions CONTENT ${ROSSDL_SYSTEM_DESCRIPTION})
@@ -106,32 +109,37 @@ macro(rossdl_generate_system description_file system)
   message(STATUS "ROSSDL_SYSTEMS_NO_VOID: " ${ROSSDL_SYSTEMS_NO_VOID})
   message(STATUS "ROSSDL_LOCAL_SYSTEMS_NO_VOID: " ${ROSSDL_LOCAL_SYSTEMS_NO_VOID})
 
-  add_custom_command(
-    OUTPUT ${_launch_out_file}
-    COMMAND ros2
-    ARGS run rossdl_cmake sdl_generator_launch
-        --package ${PROJECT_NAME}
-        --description-file ${_abs_file}
-        --artifacts ${ROSSDL_ARTIFACTS_NO_VOID}
-        --local-artifacts ${ROSSDL_LOCAL_ARTIFACTS_NO_VOID}
-        --systems ${ROSSDL_SYSTEMS_NO_VOID}
-        --local-systems ${ROSSDL_LOCAL_SYSTEMS_NO_VOID}
-        --launch-out-file ${_launch_out_file}
-        --system ${system}
-        DEPENDS ${_abs_file} ${RESOURCE_LAUNCH}
-    COMMENT "Generating launcher for ROS 2 System: ${system}"
-    VERBATIM
-  )
 
-  add_custom_target(file_toucher
-  COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${_abs_file})
+  foreach(system  ${ARGN_COPY})
+    set(_launch_out_file  ${CMAKE_CURRENT_BINARY_DIR}/launch/${system}.launch.py)
 
-  add_custom_target(${PROJECT_NAME}_run ALL
-  DEPENDS ${_launch_out_file} file_toucher)
+    add_custom_command(
+      OUTPUT ${_launch_out_file}
+      COMMAND ros2
+      ARGS run rossdl_cmake sdl_generator_launch
+          --package ${PROJECT_NAME}
+          --description-file ${_abs_file}
+          --artifacts ${ROSSDL_ARTIFACTS_NO_VOID}
+          --local-artifacts ${ROSSDL_LOCAL_ARTIFACTS_NO_VOID}
+          --systems ${ROSSDL_SYSTEMS_NO_VOID}
+          --local-systems ${ROSSDL_LOCAL_SYSTEMS_NO_VOID}
+          --launch-out-file ${_launch_out_file}
+          --system ${system}
+          DEPENDS ${_abs_file} ${RESOURCE_LAUNCH}
+      COMMENT "Generating launcher for ROS 2 System: ${system}"
+      VERBATIM
+    )
 
-  install(FILES
-    ${_launch_out_file}
-    DESTINATION share/${PROJECT_NAME}/launch
-  )
+    add_custom_target(file_toucher_${system}
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${_abs_file})
+
+    add_custom_target(${PROJECT_NAME}_${system}_run ALL
+    DEPENDS ${_launch_out_file} file_toucher_${system})
+
+    install(FILES
+      ${_launch_out_file}
+      DESTINATION share/${PROJECT_NAME}/launch
+    )
+  endforeach()
 
 endmacro()
