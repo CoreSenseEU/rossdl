@@ -8,7 +8,7 @@ Authors:
 
 *Brave ROS developers like to code*. ***But they like even more that their applications work***.
 
-What is clear is that they do not like to plan their applications by applying tedious Software Engineering and Model-driven Engineering techniques, which require drawing boxes and connections at different levels and from different perspectives. But sometimes applications become large and unwieldy, and these software engineering techniques are required to validate, verify, and certify that the applications are correct, like it or not.
+What is clear is that many ROS developers do not apply Software Engineering and Model-driven Engineering techniques, which require drawing boxes and connections at different levels and from different perspectives, which they find boring and not leading directly to running demos. But sometimes applications become large and unwieldy, and these software engineering techniques are required to validate, verify, and certify that the applications are correct, like it or not.
 
 ![ROSSDL_idea](https://github.com/user-attachments/assets/24bdacfe-bac3-4b06-a062-c2021082c522)
 
