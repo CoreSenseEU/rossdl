@@ -14,7 +14,7 @@ package_name = locals()['package']
 systems_data = locals()['systems_data']
 arfifacts = locals()['artifacts']
 
-system_info = systems_data[package_name]['systems'][system_name]
+system_info = systems_data[package_name]
 
 expand_subsystems(system_info, systems_data)
 

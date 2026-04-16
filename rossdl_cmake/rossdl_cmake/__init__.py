@@ -244,30 +244,50 @@ def generate_file(package, artifacts_file, file_in, file_out):
 
 
 def get_system_remappings(system_info, arfifacts):
-    connections = system_info['connections']
+    connections = system_info.get('connections', [])
 
     all_arfifacts = {}
     for system in arfifacts.keys():
         all_arfifacts.update(arfifacts[system]['artifacts'])
+    
+    all_interfaces = {}
+    nodes_info = system_info.get('nodes', {})
+    if isinstance(nodes_info, dict):
+        for node_data in nodes_info.values():
+            if 'interfaces' in node_data:
+                for interface in node_data['interfaces']:
+                    for alias, full_name in interface.items():
+                        if '->' not in full_name:
+                            continue
+                        _, full_topic = full_name.split('->', 1)
+                        full_topic = full_topic.strip().strip('"')
+
+                        if '::' not in full_topic:
+                            continue
+                        node, topic = full_topic.split('::', 1)
+                        all_interfaces[alias] = {
+                            'node': node,
+                            'topic': topic,
+                        }
 
     remappings = {}
     for connection in connections:
-        origin = connection[0].split('/')[1]
-        destiny = connection[1].split('/')[1]
+        origin = all_interfaces[connection[0]]['node']
+        destiny = all_interfaces[connection[1]]['node']
 
         if origin in list(all_arfifacts.keys()):
             if origin not in remappings.keys():
                 remappings[origin] = []
-            remappings[origin].append((connection[0], connection[1]))
+            remappings[origin].append((all_interfaces[connection[0]]['topic'], connection[0]))
         elif destiny in list(all_arfifacts.keys()):
             if destiny not in remappings.keys():
                 remappings[destiny] = []
-            remappings[destiny].append((connection[1], connection[0]))
+            remappings[destiny].append((all_interfaces[connection[1]]['topic'], connection[1]))
     return remappings
 
 
 def get_system_parameters(system_info, arfifacts):
-    parameters = system_info['parameters']
+    parameters = [node['parameters'] for node in system_info['nodes'].values() if 'parameters' in node]
 
     all_arfifacts = {}
     for system in arfifacts.keys():
@@ -275,17 +295,9 @@ def get_system_parameters(system_info, arfifacts):
 
     parameters_ret = {}
     for parameter in parameters:
-        parameter_name = parameter[0].split('/')[2]
-        node_name = parameter[0].split('/')[1]
-        value = parameter[1]
-
-        if node_name == '*':
-            for node in list(all_arfifacts.keys()):
-                if node not in parameters_ret.keys():
-                    parameters_ret[node] = []
-                if (parameter_name, value) not in parameters_ret[node]:
-                    parameters_ret[node].append((parameter_name, value))
-        else:
+        for parameter in parameters:
+            value = parameter[0].get("value")
+            node_name, parameter_name = list(parameter[0].values())[0].split("::")
             if node_name not in parameters_ret.keys():
                 parameters_ret[node_name] = []
             parameters_ret[node_name].append((parameter_name, value))
@@ -296,10 +308,10 @@ def get_system_parameters(system_info, arfifacts):
 def get_system_nodes(system_info):
     node_names = system_info['nodes']
     ret = []
-    for node in node_names:
-        pkg = node.split('::')[0]
-        class_name = get_class_names_from_node(node.split('::')[1])
-        ret.append((node.split('::')[1], pkg + '::' + class_name))
+    for node in node_names.values():
+        pkg = node['from'].strip('"').split('.')[0]
+        class_name = get_class_names_from_node(node['from'].strip('"').split('.')[1])
+        ret.append((node['from'].split('.')[1], pkg + '::' + class_name))
     return ret
 
 
@@ -376,16 +388,16 @@ def expand_subsystems(system_info, systems_data):
         return
 
     for subsystem in system_info['subsystems']:
-        package = subsystem.split('::')[0]
-        system = subsystem.split('::')[1]
+        # package = subsystem.split('::')[0]
+        # system = subsystem.split('::')[1]
 
-        subsystem_info = systems_data[package]['systems'][system]
+        subsystem_info = systems_data[subsystem]
         if 'subsystems' in list(subsystem_info.keys()):
             expand_subsystems(subsystem_info, systems_data)
 
-        system_info['nodes'].extend(subsystem_info['nodes'])
+        system_info['nodes'].update(subsystem_info['nodes'])
         system_info['connections'].extend(subsystem_info['connections'])
-        system_info['parameters'].extend(subsystem_info['parameters'])
+        # system_info['parameters'].extend(subsystem_info['parameters'])
 
 
 def get_data_resource(ids, resource):
