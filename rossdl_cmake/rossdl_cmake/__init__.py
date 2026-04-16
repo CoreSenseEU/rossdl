@@ -51,15 +51,15 @@ def get_publishers_name_type_from_node(package, arfifacts, node):
 
 def get_qos_from_data(data):
     ret = ''
-    if 'qos_history_depth' in data:
-        ret = 'rclcpp::QoS(' + str(data['qos_history_depth']) + ')'
-    if 'qos_profile' in data:
-        if data['qos_profile'] == 'sensor_qos':
+    if 'depth' in data:
+        ret = 'rclcpp::QoS(' + str(data['depth']) + ')'
+    if 'profile' in data:
+        if data['profile'] == 'sensor_qos':
             ret = 'rclcpp::SensorDataQoS()'
-    if 'qos_reliability' in data:
-        if data['qos_reliability'] == 'reliable':
+    if 'reliability' in data:
+        if data['reliability'] == 'reliable':
             ret = ret + '.reliable()'
-        elif data['qos_reliability'] == 'best effort':
+        elif data['reliability'] == 'best_effort':
             ret = ret + '.BestEffort()'
     # Here we need to comple all the options
     return ret
@@ -133,10 +133,10 @@ def get_message_header_from_type(msg_type):
 
 
 def to_cpp_type(ptype):
-    if ptype == 'string':
+    if ptype == 'String':
         return 'std::string'
-    elif ptype == 'float':
-        return 'float'
+    elif ptype == 'Double':
+        return 'double'
     # Here we need to comple all the options
 
 
