@@ -1,0 +1,29 @@
+sensor_msgs:
+  msgs:
+    Image
+      message
+        Header header 
+        uint32 height 
+        uint32 width 
+        string encoding 
+        uint8 is_bigendian 
+        uint32 step 
+        uint8[] data
+    LaserScan
+      message
+        Header header 
+        float32 angle_min 
+        float32 angle_max 
+        float32 angle_increment 
+        float32 time_increment 
+        float32 scan_time 
+        float32 range_min 
+        float32 range_max 
+        float32[] ranges 
+        float32[] intensities
+
+std_msgs:
+  msgs:
+    String
+      message
+        string data

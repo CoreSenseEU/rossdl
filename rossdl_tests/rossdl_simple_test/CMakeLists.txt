@@ -29,8 +29,7 @@ rossdl_generate_code(
 
 rossdl_generate_system(
   "description.rossystem"
-  "system_1"
-  "system_2"
+  "rossdl_simple_test"
 )
 
 add_library(${PROJECT_NAME} SHARED

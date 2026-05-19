@@ -1,22 +1,22 @@
----
 rossdl_test:
-  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
-  systems:
-    system_1:
-      nodes: [rossdl_test::image_filter, rossdl_test::consumer]
-      connections:
-        - [/image_filter/image_out, /consumer/image_in]
-        - [/image_filter/description_out, /consumer/description_in]
-        - [/camera/rgb/image_raw, /image_filter/image_in]
-        - [/consumer/image_out, /other_node/image_in]
+  nodes:
+    image_filter:
+      from: "rossdl_test.image_filter"
+      interfaces:
+        - image_out: pub-> "image_filter::image_out"
+        - description_out: pub-> "image_filter::description_out"
       parameters:
-        - [/image_filter/description_label, 'image raw']
-        - [/*/use_sim_time, True]
-    system_2:
-      nodes: [rossdl_test::image_filter, rossdl_test::consumer]
-      connections:
-        - [/image_filter/image_out, /consumer/image_in]
-        - [/image_filter/description_out, /consumer/description_in]
-      parameters:
-        - [/image_filter/description_label, 'image compressed']
-        - [/*/use_sim_time, False]   
+        - DescriptionLabel: "image_filter::description_label"
+          value: "image_raw"
+    consumer:
+      from: "rossdl_test.consumer"
+      interfaces:
+        - image_in: sub-> "consumer::image_in"
+        - description_in: sub-> "consumer::description_in"
+  connections:
+    - [ image_out, image_in ]
+    - [ description_out, description_in ]
+  processes:
+    process1:
+      nodes: [ image_filter, consumer ]
+      threads: 2

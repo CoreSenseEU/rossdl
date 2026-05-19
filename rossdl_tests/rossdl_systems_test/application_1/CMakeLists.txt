@@ -13,7 +13,7 @@ set(dependencies
 
 rossdl_generate_system(
   "app_1.rossystem"
-  "app_1_system_1"
+  "application_1"
 )
 
 # rossdl_generate_system(
