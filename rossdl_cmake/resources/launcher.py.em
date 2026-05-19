@@ -18,7 +18,7 @@ system_info = systems_data[package_name]
 
 expand_subsystems(system_info, systems_data)
 
-remappings = get_system_remappings(system_info, arfifacts)
+remappings = get_system_remappings(system_info, arfifacts, systems_data)
 parameters = get_system_parameters(system_info, arfifacts)
 }@
 

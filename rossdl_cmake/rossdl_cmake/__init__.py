@@ -243,15 +243,19 @@ def generate_file(package, artifacts_file, file_in, file_out):
         h.write(content)
 
 
-def get_system_remappings(system_info, arfifacts):
+def get_system_remappings(system_info, arfifacts, systems_data):
     connections = system_info.get('connections', [])
 
     all_arfifacts = {}
+    all_systems = {}
     for system in arfifacts.keys():
         all_arfifacts.update(arfifacts[system]['artifacts'])
-    
+    for system in systems_data.keys():
+        if 'nodes' in systems_data[system]:
+            all_systems.update(systems_data[system]['nodes'])
     all_interfaces = {}
     nodes_info = system_info.get('nodes', {})
+    nodes_info.update(all_systems)
     if isinstance(nodes_info, dict):
         for node_data in nodes_info.values():
             if 'interfaces' in node_data:
@@ -279,7 +283,7 @@ def get_system_remappings(system_info, arfifacts):
             if origin not in remappings.keys():
                 remappings[origin] = []
             remappings[origin].append((all_interfaces[connection[0]]['topic'], connection[0]))
-        elif destiny in list(all_arfifacts.keys()):
+        if destiny in list(all_arfifacts.keys()):
             if destiny not in remappings.keys():
                 remappings[destiny] = []
             remappings[destiny].append((all_interfaces[connection[1]]['topic'], connection[1]))
@@ -287,7 +291,10 @@ def get_system_remappings(system_info, arfifacts):
 
 
 def get_system_parameters(system_info, arfifacts):
-    parameters = [node['parameters'] for node in system_info['nodes'].values() if 'parameters' in node]
+    if 'nodes' not in system_info:
+        return {}
+    parameters = [node['parameters'] for node in system_info['nodes'].values() if
+                  'parameters' in node]
 
     all_arfifacts = {}
     for system in arfifacts.keys():
@@ -306,7 +313,7 @@ def get_system_parameters(system_info, arfifacts):
 
 
 def get_system_nodes(system_info):
-    node_names = system_info['nodes']
+    node_names = system_info['nodes'] if 'nodes' in system_info else {}
     ret = []
     for node in node_names.values():
         pkg = node['from'].strip('"').split('.')[0]
