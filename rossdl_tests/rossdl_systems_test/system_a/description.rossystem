@@ -1,11 +1,17 @@
----
 system_a:
-  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
-  systems:
+  nodes:
     system_a_basic:
-      nodes: [system_a::image_filter]
-      connections:
-        - [/camera/rgb/image_raw, /image_filter/image_in]
+      from: "system_a.image_filter"
+      interfaces:
+        - image_raw: pub-> "image_filter::image_out"
+        - image_in: sub-> "image_filter::image_in"
+        - description_out: pub-> "image_filter::description_out"
       parameters:
-        - [/image_filter/description_label, 'image raw']
-        - [/*/use_sim_time, False]
+        - DescriptionLabel: "image_filter::description_label"
+          value: "image_raw"
+  connections:
+    - [ image_raw, image_in ]
+  processes:
+    main_process:
+      nodes: [ system_a_basic ]
+      threads: 1

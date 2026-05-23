@@ -51,15 +51,15 @@ def get_publishers_name_type_from_node(package, arfifacts, node):
 
 def get_qos_from_data(data):
     ret = ''
-    if 'qos_history_depth' in data:
-        ret = 'rclcpp::QoS(' + str(data['qos_history_depth']) + ')'
-    if 'qos_profile' in data:
-        if data['qos_profile'] == 'sensor_qos':
+    if 'depth' in data:
+        ret = 'rclcpp::QoS(' + str(data['depth']) + ')'
+    if 'profile' in data:
+        if data['profile'] == 'sensor_qos':
             ret = 'rclcpp::SensorDataQoS()'
-    if 'qos_reliability' in data:
-        if data['qos_reliability'] == 'reliable':
+    if 'reliability' in data:
+        if data['reliability'] == 'reliable':
             ret = ret + '.reliable()'
-        elif data['qos_reliability'] == 'best effort':
+        elif data['reliability'] == 'best_effort':
             ret = ret + '.BestEffort()'
     # Here we need to comple all the options
     return ret
@@ -133,10 +133,10 @@ def get_message_header_from_type(msg_type):
 
 
 def to_cpp_type(ptype):
-    if ptype == 'string':
+    if ptype == 'String':
         return 'std::string'
-    elif ptype == 'float':
-        return 'float'
+    elif ptype == 'Double':
+        return 'double'
     # Here we need to comple all the options
 
 
@@ -243,31 +243,58 @@ def generate_file(package, artifacts_file, file_in, file_out):
         h.write(content)
 
 
-def get_system_remappings(system_info, arfifacts):
-    connections = system_info['connections']
+def get_system_remappings(system_info, arfifacts, systems_data):
+    connections = system_info.get('connections', [])
 
     all_arfifacts = {}
+    all_systems = {}
     for system in arfifacts.keys():
         all_arfifacts.update(arfifacts[system]['artifacts'])
+    for system in systems_data.keys():
+        if 'nodes' in systems_data[system]:
+            all_systems.update(systems_data[system]['nodes'])
+    all_interfaces = {}
+    nodes_info = system_info.get('nodes', {})
+    nodes_info.update(all_systems)
+    if isinstance(nodes_info, dict):
+        for node_data in nodes_info.values():
+            if 'interfaces' in node_data:
+                for interface in node_data['interfaces']:
+                    for alias, full_name in interface.items():
+                        if '->' not in full_name:
+                            continue
+                        _, full_topic = full_name.split('->', 1)
+                        full_topic = full_topic.strip().strip('"')
+
+                        if '::' not in full_topic:
+                            continue
+                        node, topic = full_topic.split('::', 1)
+                        all_interfaces[alias] = {
+                            'node': node,
+                            'topic': topic,
+                        }
 
     remappings = {}
     for connection in connections:
-        origin = connection[0].split('/')[1]
-        destiny = connection[1].split('/')[1]
+        origin = all_interfaces[connection[0]]['node']
+        destiny = all_interfaces[connection[1]]['node']
 
         if origin in list(all_arfifacts.keys()):
             if origin not in remappings.keys():
                 remappings[origin] = []
-            remappings[origin].append((connection[0], connection[1]))
-        elif destiny in list(all_arfifacts.keys()):
+            remappings[origin].append((all_interfaces[connection[0]]['topic'], connection[0]))
+        if destiny in list(all_arfifacts.keys()):
             if destiny not in remappings.keys():
                 remappings[destiny] = []
-            remappings[destiny].append((connection[1], connection[0]))
+            remappings[destiny].append((all_interfaces[connection[1]]['topic'], connection[1]))
     return remappings
 
 
 def get_system_parameters(system_info, arfifacts):
-    parameters = system_info['parameters']
+    if 'nodes' not in system_info:
+        return {}
+    parameters = [node['parameters'] for node in system_info['nodes'].values() if
+                  'parameters' in node]
 
     all_arfifacts = {}
     for system in arfifacts.keys():
@@ -275,17 +302,9 @@ def get_system_parameters(system_info, arfifacts):
 
     parameters_ret = {}
     for parameter in parameters:
-        parameter_name = parameter[0].split('/')[2]
-        node_name = parameter[0].split('/')[1]
-        value = parameter[1]
-
-        if node_name == '*':
-            for node in list(all_arfifacts.keys()):
-                if node not in parameters_ret.keys():
-                    parameters_ret[node] = []
-                if (parameter_name, value) not in parameters_ret[node]:
-                    parameters_ret[node].append((parameter_name, value))
-        else:
+        for parameter in parameters:
+            value = parameter[0].get("value")
+            node_name, parameter_name = list(parameter[0].values())[0].split("::")
             if node_name not in parameters_ret.keys():
                 parameters_ret[node_name] = []
             parameters_ret[node_name].append((parameter_name, value))
@@ -294,12 +313,12 @@ def get_system_parameters(system_info, arfifacts):
 
 
 def get_system_nodes(system_info):
-    node_names = system_info['nodes']
+    node_names = system_info['nodes'] if 'nodes' in system_info else {}
     ret = []
-    for node in node_names:
-        pkg = node.split('::')[0]
-        class_name = get_class_names_from_node(node.split('::')[1])
-        ret.append((node.split('::')[1], pkg + '::' + class_name))
+    for node in node_names.values():
+        pkg = node['from'].strip('"').split('.')[0]
+        class_name = get_class_names_from_node(node['from'].strip('"').split('.')[1])
+        ret.append((node['from'].split('.')[1], pkg + '::' + class_name))
     return ret
 
 
@@ -376,16 +395,16 @@ def expand_subsystems(system_info, systems_data):
         return
 
     for subsystem in system_info['subsystems']:
-        package = subsystem.split('::')[0]
-        system = subsystem.split('::')[1]
+        # package = subsystem.split('::')[0]
+        # system = subsystem.split('::')[1]
 
-        subsystem_info = systems_data[package]['systems'][system]
+        subsystem_info = systems_data[subsystem]
         if 'subsystems' in list(subsystem_info.keys()):
             expand_subsystems(subsystem_info, systems_data)
 
-        system_info['nodes'].extend(subsystem_info['nodes'])
+        system_info['nodes'].update(subsystem_info['nodes'])
         system_info['connections'].extend(subsystem_info['connections'])
-        system_info['parameters'].extend(subsystem_info['parameters'])
+        # system_info['parameters'].extend(subsystem_info['parameters'])
 
 
 def get_data_resource(ids, resource):

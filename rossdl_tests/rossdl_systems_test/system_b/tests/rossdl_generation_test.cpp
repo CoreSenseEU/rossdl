@@ -49,6 +49,9 @@ TEST(rossdl_generation_test, consumer_unit)
 
   {
     auto info = consumer->get_subscriptions_info_by_topic("/consumer/image_in");
+    for (const auto & i : info) {
+      std::cerr << i.node_name() << std::endl;
+    }
     ASSERT_EQ(info.size(), 1u);
     ASSERT_EQ(info[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
     ASSERT_EQ(info[0].qos_profile().liveliness(), rclcpp::LivelinessPolicy::Automatic);

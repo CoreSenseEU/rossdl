@@ -9,7 +9,7 @@ find_package(rossdl_cmake REQUIRED)
 
 rossdl_generate_system(
   "app_3.rossystem"
-  "app_3_system_1"
+  "application_3"
 )
 
 ament_package()

@@ -14,11 +14,11 @@ package_name = locals()['package']
 systems_data = locals()['systems_data']
 arfifacts = locals()['artifacts']
 
-system_info = systems_data[package_name]['systems'][system_name]
+system_info = systems_data[package_name]
 
 expand_subsystems(system_info, systems_data)
 
-remappings = get_system_remappings(system_info, arfifacts)
+remappings = get_system_remappings(system_info, arfifacts, systems_data)
 parameters = get_system_parameters(system_info, arfifacts)
 }@
 

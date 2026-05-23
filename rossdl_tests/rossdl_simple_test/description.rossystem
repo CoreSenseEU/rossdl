@@ -1,22 +1,25 @@
----
 rossdl_simple_test:
-  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
-  systems:
-    system_1:
-      nodes: [rossdl_simple_test::image_filter, rossdl_simple_test::consumer]
-      connections:
-        - [/image_filter/image_out, /consumer/image_in]
-        - [/image_filter/description_out, /consumer/description_in]
-        - [/camera/rgb/image_raw, /image_filter/image_in]
-        - [/consumer/image_out, /other_node/image_in]
+  nodes:
+    node1:
+      from: "test_system.image_filter"
+      interfaces:
+        - filtered_image_pub: pub-> "image_filter::image_out"
+        - description_pub: pub-> "image_filter::description_out"
+        - image_sub: sub-> "image_filter::image_in"
+        - laser_sub: sub-> "image_filter::laser_in"
       parameters:
-        - [/image_filter/description_label, 'image raw']
-        - [/*/use_sim_time, True]
-    system_2:
-      nodes: [rossdl_simple_test::image_filter, rossdl_simple_test::consumer]
-      connections:
-        - [/image_filter/image_out, /consumer/image_in]
-        - [/image_filter/description_out, /consumer/description_in]
-      parameters:
-        - [/image_filter/description_label, 'image compressed']
-        - [/*/use_sim_time, False]   
+        - ImageName: "image_filter::image_name"
+          value: "image_raw"
+    node2:
+      from: "test_system.consumer"
+      interfaces:
+        - filtered_image_sub: sub-> "consumer::image_in"
+        - description_sub: sub-> "consumer::description_in"
+        - inferenced_image_pub: pub-> "consumer::image_out"
+  connections:
+    - [ filtered_image_pub, filtered_image_sub ]
+    - [ description_pub, description_sub ]
+  processes:
+    process1:
+      nodes: [node1, node2]
+      threads: 2

@@ -1,23 +1,25 @@
----
 application_1:
-  fromGitRepo: "https://github.com/jane-doe/project_example.git:branch"
-  systems:
-    app_1_system_1:
-      nodes: [system_a::image_filter, system_b::consumer]
-      connections:
-        - [/image_filter/image_out, /consumer/image_in]
-        - [/image_filter/description_out, /consumer/description_in]
-        - [/camera/rgb/image_raw, /image_filter/image_in]
-        - [/consumer/image_out, /other_node/image_in]
+  nodes:
+    image_filter:
+      from: "system_a.image_filter"
+      interfaces:
+        - image_out: pub-> "image_filter::image_out"
+        - description_out: pub-> "image_filter::description_out"
+        - image_in: sub-> "image_filter::image_in"
       parameters:
-        - [/image_filter/description_label, 'image raw']
-        - [/*/use_sim_time, False]
-    app_1_system_2:
-      nodes: [system_a::image_filter, system_b::consumer]
-      connections:
-        - [/image_filter/image_out, /consumer/image_in]
-        - [/image_filter/description_out, /consumer/description_in]
-      parameters:
-        - [/image_filter/description_label, 'image compressed']
-        - [/*/use_sim_time, False]
-
+        - DescriptionLabel: "image_filter::description_label"
+          value: "image_raw"
+    consumer:
+      from: "system_b.consumer"
+      interfaces:
+        - consumer_image_in: sub-> "consumer::image_in"
+        - description_in: sub-> "consumer::description_in"
+        - image_raw: pub-> "consumer::image_out"
+  connections:
+    - [ image_out, consumer_image_in ]
+    - [ description_out, description_in ]
+    - [ image_raw, image_in ]
+  processes:
+    main_process:
+      nodes: [ image_filter, consumer ]
+      threads: 2
