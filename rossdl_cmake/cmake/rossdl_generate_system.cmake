@@ -58,15 +58,12 @@ macro(rossdl_generate_system) # description_file systems)
     set(_code_tuple "${CMAKE_CURRENT_SOURCE_DIR}:${description_file}")
   endif()
 
-  ament_index_get_prefix_path(PACKAGES_INSTALL_PATHS)
-  set(ROSSDL_CMAKE_PATH "")
-  foreach(PACKAGES_INSTALL_PATH ${PACKAGES_INSTALL_PATHS})
-    if(PACKAGES_INSTALL_PATH MATCHES "rossdl_cmake")
-      set(ROSSDL_CMAKE_PATH ${PACKAGES_INSTALL_PATH})
-    endif()
-  endforeach()
+  # The templates are installed in <prefix>/share/rossdl_cmake/resources and
+  # rossdl_cmake_DIR is <prefix>/share/rossdl_cmake/cmake, for any install
+  # layout (isolated, merged, Debian or conda packages).
+  get_filename_component(ROSSDL_RESOURCES_DIR "${rossdl_cmake_DIR}/../resources" ABSOLUTE)
 
-  set(RESOURCE_LAUNCH ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/launcher.py.em)
+  set(RESOURCE_LAUNCH ${ROSSDL_RESOURCES_DIR}/launcher.py.em)
 
   string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_file "${_code_tuple}")
 
@@ -75,6 +72,16 @@ macro(rossdl_generate_system) # description_file systems)
 
   ament_index_get_resources(ROSSDL_ARTIFACTS rossdl_artifact_descriptions)
   ament_index_get_resources(ROSSDL_SYSTEMS rossdl_system_descriptions)
+
+  # The descriptions of this package are registered in its build space, so
+  # CMake sees them, but they are not installed yet, so the generator cannot
+  # read them from the ament index. Always use them as local files.
+  if(ROSSDL_ARTIFACTS)
+    list(REMOVE_ITEM ROSSDL_ARTIFACTS ${PROJECT_NAME})
+  endif()
+  if(ROSSDL_SYSTEMS)
+    list(REMOVE_ITEM ROSSDL_SYSTEMS ${PROJECT_NAME})
+  endif()
 
   if(ROSSDL_ARTIFACTS)
     set(ROSSDL_ARTIFACTS_NO_VOID ${ROSSDL_ARTIFACTS})

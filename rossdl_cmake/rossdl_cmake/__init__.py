@@ -22,6 +22,33 @@ import em
 import yaml
 from yaml.loader import SafeLoader
 
+def _create_interpreter(output):
+    """Create an EmPy interpreter, compatible with EmPy 3 and EmPy 4."""
+    if hasattr(em, 'BUFFERED_OPT'):
+        # EmPy 3 (Ubuntu packages)
+        return em.Interpreter(
+            output=output,
+            options={
+                em.BUFFERED_OPT: True,
+                em.RAW_OPT: True,
+                em.OVERRIDE_OPT: False,
+            })
+    # EmPy 4 (conda-forge, pip)
+    return em.Interpreter(
+        output=output,
+        config=em.Configuration(useProxy=False),
+        dispatcher=False)
+
+
+def _expand(interpreter, content, name, handle, data):
+    if hasattr(em, 'BUFFERED_OPT'):
+        interpreter.invoke('beforeFile', name=name, file=handle, locals=data)
+        interpreter.string(content, name, locals=data)
+        interpreter.invoke('afterFile')
+    else:
+        interpreter.string(content, locals=data)
+
+
 
 def read_description(file_in):
     with open(file_in) as f:
@@ -199,19 +226,11 @@ def generate_file(package, artifacts_file, file_in, file_out):
     file_output = StringIO()
     content = ''
     try:
-        _interpreter = em.Interpreter(
-            output=file_output,
-            options={
-                em.BUFFERED_OPT: True,
-                em.RAW_OPT: True,
-            })
+        _interpreter = _create_interpreter(file_output)
 
         with open(file_in, 'r') as h:
             content = h.read()
-        _interpreter.invoke(
-            'beforeFile', name=file_in, file=h, locals=data)
-        _interpreter.string(content, file_in, locals=data)
-        _interpreter.invoke('afterFile')
+        _expand(_interpreter, content, file_in, h, data)
         content = file_output.getvalue()
     except Exception as e:  # noqa: F841
         print(
@@ -335,20 +354,11 @@ def generate_launch(package, file_in, launch_in, file_out, system, systems_data,
     content = ''
     try:
         em.Interpreter._wasProxyInstalled = False
-        _interpreter = em.Interpreter(
-            output=file_output,
-            options={
-                em.BUFFERED_OPT: True,
-                em.RAW_OPT: True,
-                em.OVERRIDE_OPT: False,
-            })
+        _interpreter = _create_interpreter(file_output)
 
         with open(launch_in, 'r') as h:
             content = h.read()
-        _interpreter.invoke(
-            'beforeFile', name=file_in, file=h, locals=data_and_system)
-        _interpreter.string(content, launch_in, locals=data_and_system)
-        _interpreter.invoke('afterFile')
+        _expand(_interpreter, content, launch_in, h, data_and_system)
         content = file_output.getvalue()
     except Exception as e:  # noqa: F841
         print(
