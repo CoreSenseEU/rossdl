@@ -1,0 +1,13 @@
+# Package manifest for Pixi: builds this ROS 2 package as a conda package.
+# Name, version and dependencies come from package.xml. See the CoreSense
+# guide: https://coresenseeu.github.io/tutorials/docs/pixi_release.html
+[package]
+publish = true
+
+[package.build.backend]
+name = "pixi-build-ros"
+workspace = true
+
+[package.build.config]
+# CMake modules, templates and Python generator are not in the default inputs
+extra-input-globs = ["cmake/**", "resources/**", "rossdl_cmake/**", "bin/**"]
