@@ -39,7 +39,7 @@ TEST(rossdl_generation_test, image_filter_unit)
 
   auto topics = image_filter->get_topic_names_and_types();
 
-  ASSERT_EQ(topics.size(), 6u);
+  ASSERT_GE(topics.size(), 6u);  // the graph may contain topics of other nodes
   ASSERT_NE(topics.find("/image_filter/image_out"), topics.end());
   ASSERT_NE(topics.find("/image_filter/description_out"), topics.end());
   ASSERT_NE(topics.find("/image_filter/image_in"), topics.end());
@@ -90,7 +90,7 @@ TEST(rossdl_generation_test, consumer_unit)
 
   auto topics = consumer->get_topic_names_and_types();
 
-  ASSERT_EQ(topics.size(), 5u);
+  ASSERT_GE(topics.size(), 5u);  // the graph may contain topics of other nodes
   ASSERT_NE(topics.find("/consumer/description_in"), topics.end());
   ASSERT_NE(topics.find("/consumer/image_in"), topics.end());
   ASSERT_NE(topics.find("/consumer/image_out"), topics.end());
