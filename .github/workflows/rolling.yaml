@@ -12,19 +12,15 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-24.04
-    env:
-      # Tests cannot create ~/.ros/log in the runner
-      ROS_LOG_DIR: /tmp/ros_log
+    # Run in the ROS images of ros-tooling, with the same distributions as
+    # the CoreSense Pixi channels
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-noble-ros-${{ matrix.ros_distro }}-ros-base-latest
     strategy:
       fail-fast: false
       matrix:
         ros_distro: [jazzy, kilted]
     steps:
-      - uses: ros-tooling/setup-ros@0.7.19
-        with:
-          required-ros-distributions: ${{ matrix.ros_distro }}
-      - name: Add the ROS libraries to the library path (needed by Kilted tests)
-        run: echo "LD_LIBRARY_PATH=/opt/ros/${{ matrix.ros_distro }}/lib:${LD_LIBRARY_PATH}" >> "$GITHUB_ENV"
       - uses: ros-tooling/action-ros-ci@0.4.8
         with:
           package-name: rossdl_cmake rossdl_simple_test system_a system_b application_1 application_2 application_3

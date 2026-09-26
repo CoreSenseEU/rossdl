@@ -22,6 +22,7 @@ import em
 import yaml
 from yaml.loader import SafeLoader
 
+
 def _create_interpreter(output):
     """Create an EmPy interpreter, compatible with EmPy 3 and EmPy 4."""
     if hasattr(em, 'BUFFERED_OPT'):
@@ -47,7 +48,6 @@ def _expand(interpreter, content, name, handle, data):
         interpreter.invoke('afterFile')
     else:
         interpreter.string(content, locals=data)
-
 
 
 def read_description(file_in):
@@ -322,8 +322,8 @@ def get_system_parameters(system_info, arfifacts):
     parameters_ret = {}
     for parameter in parameters:
         for parameter in parameters:
-            value = parameter[0].get("value")
-            node_name, parameter_name = list(parameter[0].values())[0].split("::")
+            value = parameter[0].get('value')
+            node_name, parameter_name = list(parameter[0].values())[0].split('::')
             if node_name not in parameters_ret.keys():
                 parameters_ret[node_name] = []
             parameters_ret[node_name].append((parameter_name, value))
