@@ -16,6 +16,9 @@
 
   <buildtool_export_depend>ament_cmake</buildtool_export_depend>
   <buildtool_export_depend>python3-empy</buildtool_export_depend>
+  <buildtool_export_depend>python3-yaml</buildtool_export_depend>
+  <buildtool_export_depend>ament_index_python</buildtool_export_depend>
+  <buildtool_export_depend>ros2run</buildtool_export_depend>
 
   <depend>rclpy</depend>
 

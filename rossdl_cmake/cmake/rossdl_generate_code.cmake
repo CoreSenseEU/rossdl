@@ -54,19 +54,16 @@ macro(rossdl_generate_code description_file)
     set(_code_tuple "${CMAKE_CURRENT_SOURCE_DIR}:${description_file}")
   endif()
 
-  ament_index_get_prefix_path(PACKAGES_INSTALL_PATHS)
-  set(ROSSDL_CMAKE_PATH "")
-  foreach(PACKAGES_INSTALL_PATH ${PACKAGES_INSTALL_PATHS})
-    if(PACKAGES_INSTALL_PATH MATCHES "rossdl_cmake")
-      set(ROSSDL_CMAKE_PATH ${PACKAGES_INSTALL_PATH})
-    endif()
-  endforeach()
+  # The templates are installed in <prefix>/share/rossdl_cmake/resources and
+  # rossdl_cmake_DIR is <prefix>/share/rossdl_cmake/cmake, for any install
+  # layout (isolated, merged, Debian or conda packages).
+  get_filename_component(ROSSDL_RESOURCES_DIR "${rossdl_cmake_DIR}/../resources" ABSOLUTE)
 
   file(READ ${_abs_file} ARTIFACTS_DESCRIPTION)
   ament_index_register_resource(rossdl_artifact_descriptions CONTENT ${ARTIFACTS_DESCRIPTION})
 
-  set(RESOURCE_CPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.cpp.em)
-  set(RESOURCE_HPP ${ROSSDL_CMAKE_PATH}/share/rossdl_cmake/resources/nodes.hpp.em)
+  set(RESOURCE_CPP ${ROSSDL_RESOURCES_DIR}/nodes.cpp.em)
+  set(RESOURCE_HPP ${ROSSDL_RESOURCES_DIR}/nodes.hpp.em)
 
   string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_file "${_code_tuple}")
   set(_header_out_file  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/Nodes.hpp)
